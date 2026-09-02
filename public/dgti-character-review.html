@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="data:," />
+    <title>打工人 TI 角色审核板 v2</title>
+    <style>
+      :root {
+        color: #1c2633;
+        background: #f7f4ed;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      main {
+        width: min(1440px, calc(100vw - 32px));
+        margin: 0 auto;
+        padding: 28px 0 48px;
+      }
+
+      header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
+        align-items: end;
+        padding: 0 0 22px;
+        border-bottom: 1px solid rgba(35, 47, 61, 0.14);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: clamp(24px, 4vw, 42px);
+        line-height: 1.05;
+        font-weight: 850;
+        letter-spacing: 0;
+      }
+
+      .sub {
+        margin: 0;
+        color: #617080;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .stats {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
+
+      .toolbar {
+        display: flex;
+        justify-content: flex-end;
+        padding-top: 16px;
+      }
+
+      .segmented {
+        display: inline-grid;
+        grid-template-columns: repeat(2, minmax(96px, 1fr));
+        gap: 2px;
+        padding: 3px;
+        border: 1px solid rgba(35, 47, 61, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .segmented button {
+        min-height: 34px;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: #617080;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .segmented button[aria-pressed="true"] {
+        background: #1c2633;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(28, 38, 51, 0.16);
+      }
+
+      .pill {
+        border: 1px solid rgba(35, 47, 61, 0.14);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.72);
+        color: #344253;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 14px;
+        padding-top: 22px;
+      }
+
+      .card {
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+        min-width: 0;
+        overflow: hidden;
+        border: 1px solid rgba(35, 47, 61, 0.14);
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        box-shadow: 0 12px 28px rgba(25, 37, 50, 0.08);
+      }
+
+      .image-wrap {
+        position: relative;
+        aspect-ratio: 2 / 3;
+        background: #f5f1e8;
+        overflow: hidden;
+      }
+
+      .image-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        display: block;
+      }
+
+      .status {
+        position: absolute;
+        left: 8px;
+        top: 8px;
+        max-width: calc(100% - 16px);
+        border-radius: 999px;
+        padding: 6px 9px;
+        background: rgba(28, 38, 51, 0.84);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 750;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .status.redraw {
+        background: #b65a37;
+      }
+
+      .status.watch {
+        background: #6e5aa8;
+      }
+
+      .meta {
+        display: grid;
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .name {
+        display: flex;
+        gap: 8px;
+        align-items: baseline;
+        justify-content: space-between;
+        min-width: 0;
+      }
+
+      h2 {
+        min-width: 0;
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.2;
+        letter-spacing: 0;
+      }
+
+      .code {
+        color: #7b8792;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .asset {
+        color: #8f9aa5;
+        font-size: 11px;
+        line-height: 1.35;
+        overflow-wrap: anywhere;
+      }
+
+      dl {
+        display: grid;
+        gap: 6px;
+        margin: 0;
+        color: #344253;
+        font-size: 13px;
+        line-height: 1.42;
+      }
+
+      .row {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 6px;
+      }
+
+      dt {
+        color: #7b8792;
+        font-weight: 750;
+      }
+
+      dd {
+        margin: 0;
+        min-width: 0;
+      }
+
+      @media (max-width: 1180px) {
+        .grid {
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 900px) {
+        header {
+          grid-template-columns: 1fr;
+        }
+
+        .stats {
+          justify-content: flex-start;
+        }
+
+        .toolbar {
+          justify-content: flex-start;
+        }
+
+        .grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 640px) {
+        main {
+          width: min(100vw - 20px, 420px);
+          padding-top: 18px;
+        }
+
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 10px;
+        }
+
+        .meta {
+          padding: 10px;
+        }
+
+        h2 {
+          font-size: 15px;
+        }
+
+        dl {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>打工人 TI 角色审核板 v2</h1>
+          <p class="sub">双美术线：立绘精修 + MBTI 几何备用。后续逐个角色精修，不再整组漂移。</p>
+        </div>
+        <div class="stats">
+          <span class="pill">男 11 / 女 8</span>
+          <span class="pill">立绘 + MBTI</span>
+          <span class="pill">19 个活跃角色</span>
+        </div>
+      </header>
+
+      <div class="toolbar" aria-label="美术风格切换">
+        <div class="segmented">
+          <button type="button" data-style="portrait" aria-pressed="true">立绘</button>
+          <button type="button" data-style="mbti" aria-pressed="false">MBTI 几何</button>
+        </div>
+      </div>
+
+      <section class="grid" id="grid" aria-label="角色审核列表"></section>
+    </main>
+
+    <script>
+      const styleLabels = {
+        portrait: "立绘",
+        mbti: "MBTI 几何",
+      };
+      let activeStyle = localStorage.getItem("dgti-review-style") || "portrait";
+      let cachedRoles = [];
+
+      function statusFor(role) {
+        return [role.reviewStatus || "ok", role.reviewNote || "可进入单角色精修"];
+      }
+
+      function imageFor(role) {
+        const variant = role.styleVariants?.[activeStyle];
+        const fallback = role.reviewImage || role.image;
+        return {
+          label: variant?.label || styleLabels[activeStyle] || "立绘",
+          path: variant?.path || fallback,
+          version: variant?.version || role.currentVersion || "",
+        };
+      }
+
+      function card(role) {
+        const [tone, label] = statusFor(role);
+        const displayImage = imageFor(role);
+        const activeFile = displayImage.path.split("/").pop();
+        return `
+          <article class="card">
+            <div class="image-wrap">
+              <img src="${displayImage.path}" alt="${role.name}" loading="eager" />
+              <span class="status ${tone}">${label}</span>
+            </div>
+            <div class="meta">
+              <div class="name">
+                <h2>${role.name}</h2>
+                <span class="code">${role.code}</span>
+              </div>
+              <dl>
+                <div class="row"><dt>性别</dt><dd>${role.gender}</dd></div>
+                <div class="row"><dt>脸型</dt><dd>${role.face}</dd></div>
+                <div class="row"><dt>表情</dt><dd>${role.expression}</dd></div>
+                <div class="row"><dt>组别</dt><dd>${role.groupName}</dd></div>
+              </dl>
+              <div class="asset">${role.assetId}<br />${displayImage.label} ${displayImage.version}<br />${activeFile}</div>
+            </div>
+          </article>
+        `;
+      }
+
+      function render() {
+        document.querySelector("#grid").innerHTML = cachedRoles.map(card).join("");
+        document.querySelectorAll("[data-style]").forEach((button) => {
+          button.setAttribute("aria-pressed", String(button.dataset.style === activeStyle));
+        });
+      }
+
+      document.querySelectorAll("[data-style]").forEach((button) => {
+        button.addEventListener("click", () => {
+          activeStyle = button.dataset.style;
+          localStorage.setItem("dgti-review-style", activeStyle);
+          render();
+        });
+      });
+
+      fetch("/assets/dgti/characters-v2/manifest.json")
+        .then((response) => response.json())
+        .then((roles) => {
+          cachedRoles = roles;
+          render();
+        });
+    </script>
+  </body>
+</html>

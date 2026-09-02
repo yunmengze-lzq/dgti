@@ -1,0 +1,1069 @@
+[
+  {
+    "order": 1,
+    "assetId": "dgti-char-01-chosen",
+    "code": "chosen",
+    "name": "天选打工人",
+    "gender": "男",
+    "face": "窄长脸，黑眼圈",
+    "expression": "被迫英雄、惊慌但亮眼",
+    "group": "core",
+    "groupName": "核心牛马组",
+    "sourceSlot": 1,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-core-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：边缘补足，表情改为一半忧伤一半强颜欢笑，待确认",
+    "image": "/assets/dgti/characters-v2/crops/01-chosen-crop-v2.png",
+    "naming": {
+      "cropFile": "01-chosen-crop-v2.png",
+      "nextRefinedPattern": "01-chosen-hero-v4.png",
+      "futureMerchPattern": "01-chosen-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-chosen-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/01-chosen-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "01-chosen-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/01-chosen-hero-v3.png",
+        "promptNote": "uncropped single-character hero; half-sad half-forced-happy expression",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-24",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/01-chosen-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/01-chosen-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 2,
+    "assetId": "dgti-char-02-cowhorse",
+    "code": "cowhorse",
+    "name": "牛马本马",
+    "gender": "男",
+    "face": "方圆脸，下垂眼",
+    "expression": "苦哈哈、憨厚、过载",
+    "group": "core",
+    "groupName": "核心牛马组",
+    "sourceSlot": 2,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-core-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：加入牛角、牛轭背包、马鬃感和蹄形工鞋，待确认",
+    "image": "/assets/dgti/characters-v2/crops/02-cowhorse-crop-v2.png",
+    "naming": {
+      "cropFile": "02-cowhorse-crop-v2.png",
+      "nextRefinedPattern": "02-cowhorse-hero-v4.png",
+      "futureMerchPattern": "02-cowhorse-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-cowhorse-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/02-cowhorse-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "02-cowhorse-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/02-cowhorse-hero-v3.png",
+        "promptNote": "symbolic cow-horse traits: bull horns, yoke badge backpack, mane-like hair, hoof-like shoes",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-24",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/02-cowhorse-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/02-cowhorse-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 3,
+    "assetId": "dgti-char-03-fish",
+    "code": "fish",
+    "name": "摸鱼圣体",
+    "gender": "男",
+    "face": "少年圆脸，半睁眼",
+    "expression": "无辜、低功耗、随时待机",
+    "group": "core",
+    "groupName": "核心牛马组",
+    "sourceSlot": 3,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-core-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v5：屏幕内游戏小窗更明显，保留鱼尾呆毛和鱼元素，待确认",
+    "image": "/assets/dgti/characters-v2/crops/03-fish-crop-v2.png",
+    "naming": {
+      "cropFile": "03-fish-crop-v2.png",
+      "nextRefinedPattern": "03-fish-hero-v6.png",
+      "futureMerchPattern": "03-fish-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-fish-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/03-fish-hero-v5.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "03-fish-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/03-fish-hero-v3.png",
+        "promptNote": "full single-character hero; dominant spreadsheet disguise; subtle hidden small window",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      },
+      {
+        "version": "v4",
+        "file": "03-fish-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/03-fish-hero-v4.png",
+        "promptNote": "stronger fish elements: fish-tail ahoge, fish-fin headphones, fish soul silhouettes; spreadsheet disguise remains dominant",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      },
+      {
+        "version": "v5",
+        "file": "03-fish-hero-v5.png",
+        "path": "/assets/dgti/characters-v2/refined/03-fish-hero-v5.png",
+        "promptNote": "game mini-window is clearly visible inside the spreadsheet screen; keeps fish-tail ahoge, fin headphones, low-power office posture",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      }
+    ],
+    "currentVersion": "v5-candidate",
+    "lastUpdated": "2026-08-24",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/03-fish-hero-v5.png",
+        "status": "candidate",
+        "version": "v5-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/03-fish-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 4,
+    "assetId": "dgti-char-04-traitor",
+    "code": "traitor",
+    "name": "工贼嫌疑人",
+    "gender": "男",
+    "face": "窄尖脸，标准笑",
+    "expression": "礼貌过头、像背话术",
+    "group": "core",
+    "groupName": "核心牛马组",
+    "sourceSlot": 4,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-core-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v6：废弃背后手，双手都在前侧且人体连接清楚，小喇叭改为腰侧道具，待确认",
+    "image": "/assets/dgti/characters-v2/crops/04-traitor-crop-v2.png",
+    "naming": {
+      "cropFile": "04-traitor-crop-v2.png",
+      "nextRefinedPattern": "04-traitor-hero-v7.png",
+      "futureMerchPattern": "04-traitor-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-traitor-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/04-traitor-hero-v6.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "04-traitor-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/04-traitor-hero-v3.png",
+        "promptNote": "sneaky informant vibe; tiptoeing; hidden megaphone and KPI scroll",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      },
+      {
+        "version": "v4",
+        "file": "04-traitor-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/04-traitor-hero-v4.png",
+        "promptNote": "covered head, sly exposed face, secretly typing and hiding megaphone/KPI papers",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      },
+      {
+        "version": "v5",
+        "file": "04-traitor-hero-v5.png",
+        "path": "/assets/dgti/characters-v2/refined/04-traitor-hero-v5.png",
+        "promptNote": "anatomy corrected to exactly two hands; covered head, sneaky typing, hidden megaphone/KPI anchor",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      },
+      {
+        "version": "v6",
+        "file": "04-traitor-hero-v6.png",
+        "path": "/assets/dgti/characters-v2/refined/04-traitor-hero-v6.png",
+        "promptNote": "rear-hand concept removed; both hands placed in front with visible wrist/forearm connections; megaphone is passive waist prop",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      }
+    ],
+    "currentVersion": "v6-candidate",
+    "lastUpdated": "2026-08-24",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/04-traitor-hero-v6.png",
+        "status": "candidate",
+        "version": "v6-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/04-traitor-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 5,
+    "assetId": "dgti-char-05-potman",
+    "code": "potman",
+    "name": "背锅侠",
+    "gender": "男",
+    "face": "短方脸，大眼",
+    "expression": "震惊但熟练",
+    "group": "support",
+    "groupName": "救火背锅组",
+    "sourceSlot": 1,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-support-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：完整边缘单人稿，锅盖盾牌主锚点更明确，锅从天降，待确认",
+    "image": "/assets/dgti/characters-v2/crops/05-potman-crop-v2.png",
+    "naming": {
+      "cropFile": "05-potman-crop-v2.png",
+      "nextRefinedPattern": "05-potman-hero-v4.png",
+      "futureMerchPattern": "05-potman-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-potman-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/05-potman-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "05-potman-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/05-potman-hero-v3.png",
+        "promptNote": "full-body hero with large pot-lid shield, falling pots, incident notes, complete edges",
+        "status": "candidate",
+        "createdAt": "2026-08-24"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-24",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/05-potman-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/05-potman-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 6,
+    "assetId": "dgti-char-06-firefighter",
+    "code": "firefighter",
+    "name": "职场消防员",
+    "gender": "女",
+    "face": "运动感短脸，上扬眉",
+    "expression": "紧张、燃、救场",
+    "group": "support",
+    "groupName": "救火背锅组",
+    "sourceSlot": 2,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-support-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：完整边缘单人稿，灭火器和燃烧工单锚点明确，待确认",
+    "image": "/assets/dgti/characters-v2/crops/06-firefighter-crop-v2.png",
+    "naming": {
+      "cropFile": "06-firefighter-crop-v2.png",
+      "nextRefinedPattern": "06-firefighter-hero-v4.png",
+      "futureMerchPattern": "06-firefighter-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-firefighter-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/06-firefighter-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "06-firefighter-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/06-firefighter-hero-v3.png",
+        "promptNote": "full-body office rescue sprinter with red extinguisher, polygon work-order flames, strict style-anchor match",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/06-firefighter-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/06-firefighter-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 7,
+    "assetId": "dgti-char-07-crispy",
+    "code": "crispy",
+    "name": "脆皮牛马",
+    "gender": "男",
+    "face": "长发清瘦脸，柔和下垂眼",
+    "expression": "可爱硬撑、易碎、低血条但讨喜",
+    "group": "support",
+    "groupName": "救火背锅组",
+    "sourceSlot": 3,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-support-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v6：改成长发可爱男版，脸色更干净，保留裂壳、气泡膜、续命饮料和低血量梗，待确认",
+    "image": "/assets/dgti/characters-v2/crops/07-crispy-crop-v2.png",
+    "naming": {
+      "cropFile": "07-crispy-crop-v2.png",
+      "nextRefinedPattern": "07-crispy-hero-v7.png",
+      "futureMerchPattern": "07-crispy-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-crispy-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/07-crispy-hero-v6.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "07-crispy-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/07-crispy-hero-v3.png",
+        "promptNote": "full-body fragile office worker with large glass-heart shield, low-battery UI and bandage anchors",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "07-crispy-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/07-crispy-hero-v4.png",
+        "promptNote": "healing milk tea added as clear secondary prop while preserving glass-heart shield as main anchor",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v5",
+        "file": "07-crispy-hero-v5.png",
+        "path": "/assets/dgti/characters-v2/refined/07-crispy-hero-v5.png",
+        "promptNote": "heart-shield main anchor removed; cracked transparent shell, body fissures, low battery, bubble-wrap and sharper exhausted face emphasize crispy fragility",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v6",
+        "file": "07-crispy-hero-v6.png",
+        "path": "/assets/dgti/characters-v2/refined/07-crispy-hero-v6.png",
+        "promptNote": "cute long-haired male fragile office worker; cleaner face, cracked protective shell, bubble-wrap, recovery drink; avoids gloomy dark face",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v6-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/07-crispy-hero-v6.png",
+        "status": "candidate",
+        "version": "v6-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/07-crispy-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 8,
+    "assetId": "dgti-char-08-boundary",
+    "code": "boundary",
+    "name": "边界门神",
+    "gender": "女",
+    "face": "高马尾青春美少女脸，平直眉",
+    "expression": "清爽可爱、温柔但不让步",
+    "group": "support",
+    "groupName": "救火背锅组",
+    "sourceSlot": 4,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-support-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v6：黑丝绝对领域、小皮鞋，传统门神挂画和美少女复刻姿势为主锚点，待确认",
+    "image": "/assets/dgti/characters-v2/crops/08-boundary-crop-v2.png",
+    "naming": {
+      "cropFile": "08-boundary-crop-v2.png",
+      "nextRefinedPattern": "08-boundary-hero-v7.png",
+      "futureMerchPattern": "08-boundary-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-boundary-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/08-boundary-hero-v6.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "08-boundary-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/08-boundary-hero-v3.png",
+        "promptNote": "shield and protective bubble direction; rejected because it overused protection/boundary props",
+        "status": "rejected",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "08-boundary-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/08-boundary-hero-v4.png",
+        "promptNote": "doorframe and threshold direction; rejected because door/boundary should not be primary anchors",
+        "status": "rejected",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v5",
+        "file": "08-boundary-hero-v5.png",
+        "path": "/assets/dgti/characters-v2/refined/08-boundary-hero-v5.png",
+        "promptNote": "high ponytail fashionable girl with traditional door-god hanging scroll and mirrored guarding pose; superseded by outfit request",
+        "status": "superseded",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v6",
+        "file": "08-boundary-hero-v6.png",
+        "path": "/assets/dgti/characters-v2/refined/08-boundary-hero-v6.png",
+        "promptNote": "adds black thigh-high stockings with clear zettai ryouiki and small black leather shoes; keeps door-god scroll and mirrored pose anchors",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v6-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/08-boundary-hero-v6.png",
+        "status": "candidate",
+        "version": "v6-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/08-boundary-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 9,
+    "assetId": "dgti-char-09-leadercard",
+    "code": "leadercard",
+    "name": "领导体验卡",
+    "gender": "男",
+    "face": "方脸，强眉骨",
+    "expression": "自信、压迫、好为人师",
+    "group": "bossy",
+    "groupName": "领导污染组",
+    "sourceSlot": 1,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-bossy-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：前景手拿领导工牌，背后浮现秃头领导武魂真身，待确认",
+    "image": "/assets/dgti/characters-v2/crops/09-leadercard-crop-v2.png",
+    "naming": {
+      "cropFile": "09-leadercard-crop-v2.png",
+      "nextRefinedPattern": "09-leadercard-hero-v4.png",
+      "futureMerchPattern": "09-leadercard-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-leadercard-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/09-leadercard-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "09-leadercard-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/09-leadercard-hero-v3.png",
+        "promptNote": "young worker holding a leader badge while a huge translucent bald boss spirit form appears behind him; laser pointer, blank PPT, small podium",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/09-leadercard-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/09-leadercard-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 10,
+    "assetId": "dgti-char-10-pptgod",
+    "code": "pptgod",
+    "name": "PPT 仙人",
+    "gender": "女",
+    "face": "精英鹅蛋脸，疲惫眼",
+    "expression": "优雅、加班感、汇报光",
+    "group": "bossy",
+    "groupName": "领导污染组",
+    "sourceSlot": 2,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-bossy-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v4：女性/中性偏女职场仙人，手持 PPT 飞剑，背后展开 deck 剑阵，待确认",
+    "image": "/assets/dgti/characters-v2/crops/10-pptgod-crop-v2.png",
+    "naming": {
+      "cropFile": "10-pptgod-crop-v2.png",
+      "nextRefinedPattern": "10-pptgod-hero-v5.png",
+      "futureMerchPattern": "10-pptgod-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-pptgod-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/10-pptgod-hero-v4.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "10-pptgod-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/10-pptgod-hero-v3.png",
+        "promptNote": "elegant workplace immortal with slide halo; superseded because handheld weapon looked more like a staff than a PPT flying sword",
+        "status": "superseded",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "10-pptgod-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/10-pptgod-hero-v4.png",
+        "promptNote": "stronger PPT flying sword and fan-shaped deck sword array, feminine workplace-immortal styling",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v4-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/10-pptgod-hero-v4.png",
+        "status": "candidate",
+        "version": "v4-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/10-pptgod-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 11,
+    "assetId": "dgti-char-11-meetingbot",
+    "code": "meetingbot",
+    "name": "会议永动机",
+    "gender": "男",
+    "face": "方圆脸，眼镜",
+    "expression": "认真过头、无辜拉会",
+    "group": "bossy",
+    "groupName": "领导污染组",
+    "sourceSlot": 3,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-bossy-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：人物被变成会议永动机，会议桌/座椅/齿轮/日历轮构成循环会议系统，待确认",
+    "image": "/assets/dgti/characters-v2/crops/11-meetingbot-crop-v2.png",
+    "naming": {
+      "cropFile": "11-meetingbot-crop-v2.png",
+      "nextRefinedPattern": "11-meetingbot-hero-v4.png",
+      "futureMerchPattern": "11-meetingbot-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-meetingbot-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/11-meetingbot-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "11-meetingbot-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/11-meetingbot-hero-v3.png",
+        "promptNote": "human transformed into a meeting perpetual-motion machine, seated in a circular meeting-table and chair gear system with video windows and calendar wheel",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/11-meetingbot-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/11-meetingbot-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 12,
+    "assetId": "dgti-char-12-wishpool",
+    "code": "wishpool",
+    "name": "需求许愿池",
+    "gender": "女",
+    "face": "圆脸，大眼",
+    "expression": "天真但危险",
+    "group": "bossy",
+    "groupName": "领导污染组",
+    "sourceSlot": 4,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-bossy-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：人物从需求神灯中冒出，回应左下角许愿人，待确认",
+    "image": "/assets/dgti/characters-v2/crops/12-wishpool-crop-v2.png",
+    "naming": {
+      "cropFile": "12-wishpool-crop-v2.png",
+      "nextRefinedPattern": "12-wishpool-hero-v4.png",
+      "futureMerchPattern": "12-wishpool-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-wishpool-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/12-wishpool-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "12-wishpool-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/12-wishpool-hero-v3.png",
+        "promptNote": "wish-granting requirements genie emerges directly from an original Aladdin-style lamp, responding to a coworker wishing below",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/12-wishpool-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/12-wishpool-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 13,
+    "assetId": "dgti-char-13-stirrer",
+    "code": "stirrer",
+    "name": "搅 shit 棍",
+    "gender": "男",
+    "face": "小尖脸，眯眼坏笑",
+    "expression": "坏笑、兴奋、明知故犯",
+    "group": "chaos",
+    "groupName": "混乱屎山组",
+    "sourceSlot": 1,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-chaos-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v4：坏笑、明知故犯，画风更贴近统一低多边形人格图鉴，待确认",
+    "image": "/assets/dgti/characters-v2/crops/13-stirrer-crop-v2.png",
+    "naming": {
+      "cropFile": "13-stirrer-crop-v2.png",
+      "nextRefinedPattern": "13-stirrer-hero-v5.png",
+      "futureMerchPattern": "13-stirrer-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-stirrer-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/13-stirrer-hero-v4.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "13-stirrer-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/13-stirrer-hero-v3.png",
+        "promptNote": "reference-image direction: cheerful boy holding a long stirring staff, standing in a chaotic vortex of notes, arrows, process lines, and coffee-like swirl; superseded because the expression was too sunny and the style too illustrative",
+        "status": "superseded",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "13-stirrer-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/13-stirrer-hero-v4.png",
+        "promptNote": "unified 2D low-poly atlas style, mischievous bad smile, long stirring staff, cleaner vortex composition",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v4-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/13-stirrer-hero-v4.png",
+        "status": "candidate",
+        "version": "v4-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/13-stirrer-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 14,
+    "assetId": "dgti-char-14-shitmountain",
+    "code": "shitmountain",
+    "name": "屎山继承人",
+    "gender": "男",
+    "face": "长脸，下垂眼",
+    "expression": "麻木、被迫继承、历经版本",
+    "group": "chaos",
+    "groupName": "混乱屎山组",
+    "sourceSlot": 2,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-chaos-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：人物被文件山、旧系统、裂开的 Excel 和“前任留下”便签埋住，只露半身，待确认",
+    "image": "/assets/dgti/characters-v2/crops/14-shitmountain-crop-v2.png",
+    "naming": {
+      "cropFile": "14-shitmountain-crop-v2.png",
+      "nextRefinedPattern": "14-shitmountain-hero-v4.png",
+      "futureMerchPattern": "14-shitmountain-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-shitmountain-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/14-shitmountain-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "14-shitmountain-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/14-shitmountain-hero-v3.png",
+        "promptNote": "shit-mountain inheritor buried waist-deep in legacy documents, old systems, cracked Excel sheets, cables, and sticky notes marked 前任留下",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/14-shitmountain-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/14-shitmountain-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 16,
+    "assetId": "dgti-char-16-twoface",
+    "code": "twoface",
+    "name": "两面人",
+    "gender": "女",
+    "face": "半边甜笑半边冷脸",
+    "expression": "对上讨好、对下甩锅",
+    "group": "chaos",
+    "groupName": "混乱屎山组",
+    "sourceSlot": 4,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-chaos-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v3：对领导甜笑递方案，对同事冷脸藏甩锅便签，一人双面，待确认",
+    "image": "/assets/dgti/characters-v2/crops/16-twoface-crop-v2.png",
+    "naming": {
+      "cropFile": "16-twoface-crop-v2.png",
+      "nextRefinedPattern": "16-twoface-hero-v4.png",
+      "futureMerchPattern": "16-twoface-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-twoface-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/16-twoface-hero-v3.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "16-twoface-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/16-twoface-hero-v3.png",
+        "promptNote": "two-faced workplace woman split into warm leader-facing side and cold coworker-facing side, half bright suit and half dark suit, hidden blame-shifting note",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v3-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/16-twoface-hero-v3.png",
+        "status": "candidate",
+        "version": "v3-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/16-twoface-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 17,
+    "assetId": "dgti-char-17-alive",
+    "code": "alive",
+    "name": "活人感代表",
+    "gender": "女",
+    "face": "开朗圆脸，大笑眼",
+    "expression": "明亮、主动、活人感爆棚",
+    "group": "social",
+    "groupName": "社交修复组",
+    "sourceSlot": 1,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-social-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v4：MBTI 向几何扁平人格插画，从灰色群聊框里冲出来，巨大举手和心跳工牌突出活人感，待确认",
+    "image": "/assets/dgti/characters-v2/crops/17-alive-crop-v2.png",
+    "naming": {
+      "cropFile": "17-alive-crop-v2.png",
+      "nextRefinedPattern": "17-alive-hero-v5.png",
+      "futureMerchPattern": "17-alive-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-alive-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/17-alive-hero-v4.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "17-alive-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/17-alive-hero-v3.png",
+        "promptNote": "alive-feeling office girl jumping out of grey silent group chat with raised hand, life-energy badge and heartbeat line",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "17-alive-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/17-alive-hero-v4.png",
+        "promptNote": "MBTI-style geometric flat-vector alive coworker bursting from grey dead chat frame with oversized raised hand and pulse badge",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v4-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/17-alive-hero-v4.png",
+        "status": "candidate",
+        "version": "v4-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/17-alive-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 18,
+    "assetId": "dgti-char-18-emohealer",
+    "code": "emohealer",
+    "name": "情绪价值供应商",
+    "gender": "女",
+    "face": "软妹圆润脸，水润眼",
+    "expression": "甜软、温柔、治愈但也会累",
+    "group": "social",
+    "groupName": "社交修复组",
+    "sourceSlot": 2,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-social-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v4：MBTI 向几何扁平人格插画，软妹针织、奶茶、毛绒急救包、纸巾和创可贴，待确认",
+    "image": "/assets/dgti/characters-v2/crops/18-emohealer-crop-v2.png",
+    "naming": {
+      "cropFile": "18-emohealer-crop-v2.png",
+      "nextRefinedPattern": "18-emohealer-hero-v5.png",
+      "futureMerchPattern": "18-emohealer-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-emohealer-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/18-emohealer-hero-v4.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "18-emohealer-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/18-emohealer-hero-v3.png",
+        "promptNote": "soft-girl emotional-value supplier with knit cardigan, milk tea, plush first-aid kit, tissues and bandages",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "18-emohealer-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/18-emohealer-hero-v4.png",
+        "promptNote": "MBTI-style geometric flat-vector soft emotional-value supplier with milk tea, oversized plush first-aid bag, tissues and bandages",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v4-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/18-emohealer-hero-v4.png",
+        "status": "candidate",
+        "version": "v4-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/18-emohealer-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 19,
+    "assetId": "dgti-char-19-silentgod",
+    "code": "silentgod",
+    "name": "沉默大神",
+    "gender": "男",
+    "face": "瘦长脸，冷眼，嘴上拉链",
+    "expression": "安静、可靠、闭嘴干活",
+    "group": "social",
+    "groupName": "社交修复组",
+    "sourceSlot": 3,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-social-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v4：MBTI 向几何扁平人格插画，巨大嘴部拉链、锁头和拉链气泡让沉默梗一眼可读，待确认",
+    "image": "/assets/dgti/characters-v2/crops/19-silentgod-crop-v2.png",
+    "naming": {
+      "cropFile": "19-silentgod-crop-v2.png",
+      "nextRefinedPattern": "19-silentgod-hero-v5.png",
+      "futureMerchPattern": "19-silentgod-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-silentgod-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/19-silentgod-hero-v4.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "19-silentgod-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/19-silentgod-hero-v3.png",
+        "promptNote": "silent reliable office boy with visible zipper sealed mouth, dark hoodie, hidden folder, glowing muted laptop",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "19-silentgod-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/19-silentgod-hero-v4.png",
+        "promptNote": "MBTI-style geometric flat-vector silent coworker with oversized zipper sealing mouth, padlock and zipped muted speech bubbles",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v4-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/19-silentgod-hero-v4.png",
+        "status": "candidate",
+        "version": "v4-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/19-silentgod-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  },
+  {
+    "order": 20,
+    "assetId": "dgti-char-20-aicoworker",
+    "code": "aicoworker",
+    "name": "人机同事",
+    "gender": "女",
+    "face": "标准椭圆脸，空灵微笑，轻微机械感",
+    "expression": "预制、礼貌、人机感、微没灵魂",
+    "group": "social",
+    "groupName": "社交修复组",
+    "sourceSlot": 4,
+    "sourceSheet": "public/assets/dgti/sheets/dgti-social-lineup-v2.png",
+    "reviewStatus": "candidate",
+    "reviewNote": "候选 v4：MBTI 向几何扁平人格插画，盒装出厂、透明吸塑、加载条和 UI 模块突出人机同事，待确认",
+    "image": "/assets/dgti/characters-v2/crops/20-aicoworker-crop-v2.png",
+    "naming": {
+      "cropFile": "20-aicoworker-crop-v2.png",
+      "nextRefinedPattern": "20-aicoworker-hero-v5.png",
+      "futureMerchPattern": "20-aicoworker-ceramic-v1.png",
+      "futureBondPattern": "bond-{bond_code}-aicoworker-v1.png"
+    },
+    "reviewImage": "/assets/dgti/characters-v2/refined/20-aicoworker-hero-v4.png",
+    "refinedCandidates": [
+      {
+        "version": "v3",
+        "file": "20-aicoworker-hero-v3.png",
+        "path": "/assets/dgti/characters-v2/refined/20-aicoworker-hero-v3.png",
+        "promptNote": "human-machine coworker with factory protective film, loading bar, template reply cards, default avatar badge and modular UI blocks",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      },
+      {
+        "version": "v4",
+        "file": "20-aicoworker-hero-v4.png",
+        "path": "/assets/dgti/characters-v2/refined/20-aicoworker-hero-v4.png",
+        "promptNote": "MBTI-style geometric flat-vector human-machine coworker standing in half-open blister packaging with loading bar, avatar badge, UI modules and cable",
+        "status": "candidate",
+        "createdAt": "2026-08-25"
+      }
+    ],
+    "currentVersion": "v4-candidate",
+    "lastUpdated": "2026-08-25",
+    "styleVariants": {
+      "portrait": {
+        "label": "日系立绘",
+        "path": "/assets/dgti/characters-v2/refined/20-aicoworker-hero-v4.png",
+        "status": "candidate",
+        "version": "v4-candidate"
+      },
+      "mbti": {
+        "label": "MBTI 几何",
+        "path": "/assets/dgti/characters-v2/mbti/20-aicoworker-mbti-v1.png",
+        "status": "candidate",
+        "version": "v1-candidate"
+      }
+    }
+  }
+]

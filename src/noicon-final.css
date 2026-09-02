@@ -1,0 +1,360 @@
+/* Final no-icon visual correction. Imported after styles.css. */
+.brand-symbol.wordmark-symbol {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 72px;
+  height: 36px;
+  color: var(--ink);
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  text-indent: 0;
+}
+
+.brand-symbol.wordmark-symbol span {
+  font-family: "Avenir Next", "PingFang SC", Arial, sans-serif;
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.brand-symbol.wordmark-symbol i {
+  position: absolute;
+  right: 2px;
+  bottom: 3px;
+  left: 2px;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, #f04452 0 28%, #0e63ff 28% 100%);
+}
+
+.editorial-gateway {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 1;
+  pointer-events: none;
+  transform: none;
+}
+
+.gateway-orbit {
+  position: absolute;
+  right: 5vw;
+  top: 120px;
+  width: min(620px, 46vw);
+  height: 420px;
+  border: 1px solid rgba(14, 99, 255, 0.14);
+  border-right-color: transparent;
+  border-bottom-color: rgba(14, 99, 255, 0.06);
+  border-radius: 50%;
+  transform: rotate(-12deg);
+}
+
+.gateway-orbit::before,
+.gateway-orbit::after {
+  position: absolute;
+  content: "";
+  border: 1px solid rgba(14, 99, 255, 0.11);
+  border-left-color: transparent;
+  border-radius: 50%;
+}
+
+.gateway-orbit::before {
+  inset: 56px 34px 42px 56px;
+  transform: rotate(16deg);
+}
+
+.gateway-orbit::after {
+  right: 80px;
+  bottom: 58px;
+  width: 280px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.36);
+}
+
+.registration-pass {
+  position: absolute;
+  top: 150px;
+  right: min(8vw, 118px);
+  width: min(430px, 34vw);
+  min-height: 312px;
+  padding: 30px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid rgba(13, 44, 90, 0.12);
+  border-radius: 8px;
+  box-shadow: 0 28px 90px rgba(8, 39, 94, 0.12);
+  backdrop-filter: blur(18px);
+  transform: rotate(-2deg);
+}
+
+.registration-pass::after {
+  position: absolute;
+  right: 22px;
+  bottom: 22px;
+  width: 74px;
+  height: 74px;
+  content: "";
+  background:
+    linear-gradient(90deg, rgba(7, 23, 55, 0.18) 2px, transparent 2px) 0 0 / 12px 12px,
+    linear-gradient(rgba(7, 23, 55, 0.18) 2px, transparent 2px) 0 0 / 12px 12px;
+  opacity: 0.5;
+}
+
+.pass-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 18px;
+  align-items: start;
+}
+
+.pass-header span,
+.sheet-title span,
+.deadline-card span {
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.pass-header strong {
+  grid-column: 1;
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1.1;
+}
+
+.pass-header em {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  writing-mode: vertical-rl;
+  color: #8a99af;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.pass-number {
+  margin-top: 32px;
+  padding: 18px 0;
+  color: var(--ink);
+  border-top: 1px solid rgba(13, 44, 90, 0.13);
+  border-bottom: 1px solid rgba(13, 44, 90, 0.13);
+  font-size: 24px;
+  font-weight: 850;
+}
+
+.pass-fields {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px 24px;
+  margin: 24px 0 0;
+}
+
+.pass-fields div {
+  display: grid;
+  gap: 5px;
+}
+
+.pass-fields dt {
+  color: #7a8aa2;
+  font-size: 12px;
+}
+
+.pass-fields dd {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.pass-progress {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.pass-progress span {
+  height: 4px;
+  background: rgba(14, 99, 255, 0.18);
+}
+
+.pass-progress span:nth-child(-n + 3) {
+  background: var(--accent);
+}
+
+.review-sheet {
+  position: absolute;
+  right: min(4.5vw, 68px);
+  bottom: 185px;
+  width: min(368px, 28vw);
+  padding: 22px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid rgba(13, 44, 90, 0.11);
+  border-radius: 8px;
+  box-shadow: 0 24px 76px rgba(8, 39, 94, 0.1);
+  backdrop-filter: blur(16px);
+}
+
+.sheet-title {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(13, 44, 90, 0.12);
+}
+
+.sheet-title strong {
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.review-row {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  min-height: 44px;
+  border-bottom: 1px solid rgba(13, 44, 90, 0.09);
+}
+
+.review-row span {
+  color: #8a99af;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.review-row strong {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+
+.review-row em {
+  color: var(--accent);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.deadline-card {
+  position: absolute;
+  top: 114px;
+  right: min(34vw, 520px);
+  display: grid;
+  gap: 4px;
+  min-width: 180px;
+  padding: 18px 20px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(13, 44, 90, 0.1);
+  border-radius: 8px;
+  box-shadow: 0 20px 60px rgba(8, 39, 94, 0.1);
+}
+
+.deadline-card strong {
+  font-size: 21px;
+}
+
+.deadline-card small {
+  color: var(--muted);
+}
+
+.surface-preview {
+  grid-template-columns: 1fr;
+  grid-template-rows: 14px 1fr 1fr 1fr;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(238, 246, 255, 0.9)),
+    #fff;
+  border: 1px solid rgba(13, 44, 90, 0.11);
+  box-shadow: none;
+}
+
+.surface-preview i,
+.surface-preview b,
+.surface-preview em {
+  width: 100%;
+  background: rgba(7, 23, 55, 0.12);
+  border-radius: 2px;
+}
+
+.surface-preview i {
+  grid-column: auto;
+  width: 42%;
+}
+
+.surface-preview em {
+  grid-row: auto;
+  background: rgba(14, 99, 255, 0.72);
+}
+
+@media (max-width: 1120px) {
+  .registration-pass {
+    right: 30px;
+    width: min(420px, 38vw);
+  }
+
+  .review-sheet {
+    right: 24px;
+    width: min(350px, 34vw);
+  }
+
+  .deadline-card {
+    right: 42vw;
+  }
+}
+
+@media (max-width: 820px) {
+  .brand-symbol.wordmark-symbol {
+    width: 60px;
+  }
+
+  .hero-inner {
+    padding-bottom: 390px;
+  }
+
+  .editorial-gateway {
+    top: auto;
+    bottom: 0;
+    height: 420px;
+  }
+
+  .gateway-orbit {
+    right: -170px;
+    top: 44px;
+    width: 520px;
+    height: 310px;
+  }
+
+  .registration-pass {
+    top: 42px;
+    right: 22px;
+    left: 22px;
+    width: auto;
+    min-height: 242px;
+    padding: 22px;
+    transform: rotate(-1deg);
+  }
+
+  .pass-header strong {
+    font-size: 24px;
+  }
+
+  .pass-number {
+    margin-top: 22px;
+    font-size: 19px;
+  }
+
+  .pass-fields {
+    gap: 12px;
+  }
+
+  .review-sheet {
+    display: none;
+  }
+
+  .deadline-card {
+    top: 302px;
+    right: 28px;
+  }
+}

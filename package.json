@@ -1,0 +1,20 @@
+{
+  "name": "opc-registration-prototype",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "package:html": "npm run build && node scripts/package-dgti-html.mjs && cd output && rm -f dgti-html-preview.zip && zip -qr dgti-html-preview.zip dgti-html-preview",
+    "validate:dgti": "node scripts/validate-dgti-scoring.mjs",
+    "preview": "vite preview --host 0.0.0.0"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "html-to-image": "^1.11.13",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "vite": "^7.1.5"
+  }
+}

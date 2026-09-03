@@ -777,8 +777,11 @@ select:focus-visible {
 
 .answer-option {
   display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
   min-height: 74px;
-  padding: 18px 18px 18px 20px;
+  padding: 17px 18px 17px 16px;
   color: var(--ink);
   text-align: left;
   background: #fff;
@@ -819,9 +822,48 @@ select:focus-visible {
   opacity: 0.62;
 }
 
-.answer-option strong {
+.answer-index {
+  display: inline-grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  color: var(--blue);
+  font-family: "Fredoka", sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  background: rgba(47, 112, 200, 0.1);
+  border: 1px solid rgba(47, 112, 200, 0.18);
+  border-radius: 50%;
+}
+
+.answer-option:nth-child(2n) .answer-index {
+  color: #a05f08;
+  background: rgba(240, 173, 47, 0.14);
+  border-color: rgba(240, 173, 47, 0.24);
+}
+
+.answer-option:nth-child(3n) .answer-index {
+  color: #a33b4e;
+  background: rgba(214, 75, 99, 0.1);
+  border-color: rgba(214, 75, 99, 0.18);
+}
+
+.answer-main {
+  color: var(--ink-soft);
   font-size: 17px;
+  font-weight: 480;
   line-height: 1.45;
+}
+
+.question-emphasis,
+.answer-emphasis {
+  color: var(--ink);
+  font-weight: 1000;
+}
+
+.question-emphasis {
+  padding: 0 0.08em;
+  background: linear-gradient(180deg, transparent 58%, rgba(240, 173, 47, 0.32) 0);
 }
 
 .quiz-controls {
@@ -875,6 +917,29 @@ select:focus-visible {
   margin: 14px 0 0;
   color: var(--result-color);
   font-weight: 900;
+}
+
+.rarity-badge,
+.type-rarity {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  min-height: 30px;
+  margin-top: 10px;
+  padding: 0 10px;
+  color: #7c332d;
+  font-size: 12px;
+  font-weight: 950;
+  background: rgba(214, 75, 99, 0.1);
+  border: 1px solid rgba(214, 75, 99, 0.18);
+  border-radius: 999px;
+}
+
+.type-rarity {
+  margin: 2px 0 8px;
+  color: #7b5a16;
+  background: rgba(240, 173, 47, 0.14);
+  border-color: rgba(240, 173, 47, 0.24);
 }
 
 .result-sentence {
@@ -2498,14 +2563,23 @@ select:focus-visible {
   }
 
   .answer-option {
+    grid-template-columns: 30px minmax(0, 1fr);
+    gap: 10px;
     min-height: auto;
-    padding: 14px 14px 14px 16px;
+    padding: 13px 13px 13px 12px;
     border-left-width: 5px;
     box-shadow: 0 8px 18px rgba(23, 32, 51, 0.04);
   }
 
-  .answer-option strong {
+  .answer-index {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .answer-main {
     font-size: 15px;
+    line-height: 1.48;
   }
 
   .quiz-controls {

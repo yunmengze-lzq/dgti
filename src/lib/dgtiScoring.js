@@ -2,6 +2,10 @@ import { axisMeta, factorMeta, questionBank, roleProfiles } from "../data/dgti.j
 
 const PRIMARY_ROLE_WEIGHT = 14;
 const SECONDARY_ROLE_WEIGHT = 9;
+let factorBoundsCache;
+let axisBoundsCache;
+let roleCeilingsCache;
+let rarityStatsCache;
 
 export const profileAxisTargets = {
   CHOSEN: { energy: 58, information: 48, decision: 68, structure: 78 },
@@ -9,6 +13,7 @@ export const profileAxisTargets = {
   FISH: { energy: 24, information: 52, decision: 42, structure: 22 },
   TRAITOR: { energy: 70, information: 62, decision: 62, structure: 58 },
   POTMAN: { energy: 45, information: 38, decision: 48, structure: 58 },
+  SHIFTER: { energy: 50, information: 40, decision: 82, structure: 70 },
   FIREFIGHTER: { energy: 72, information: 36, decision: 64, structure: 60 },
   CRISPY: { energy: 25, information: 42, decision: 35, structure: 28 },
   BOUNDARY: { energy: 38, information: 32, decision: 74, structure: 82 },
@@ -47,6 +52,7 @@ function getRoleWeight(answer, code) {
 }
 
 export function getFactorBounds() {
+  if (factorBoundsCache) return factorBoundsCache;
   const bounds = Object.fromEntries(factorMeta.map(([key]) => [key, { min: 0, max: 0 }]));
 
   questionBank.forEach((question) => {
@@ -57,10 +63,12 @@ export function getFactorBounds() {
     });
   });
 
+  factorBoundsCache = bounds;
   return bounds;
 }
 
 export function getAxisBounds() {
+  if (axisBoundsCache) return axisBoundsCache;
   const bounds = Object.fromEntries(axisMeta.map(([key]) => [key, { min: 0, max: 0 }]));
 
   questionBank.forEach((question) => {
@@ -71,10 +79,12 @@ export function getAxisBounds() {
     });
   });
 
+  axisBoundsCache = bounds;
   return bounds;
 }
 
 export function getRoleCeilings() {
+  if (roleCeilingsCache) return roleCeilingsCache;
   const primary = createRoleMap(0);
   const total = createRoleMap(0);
 
@@ -85,7 +95,8 @@ export function getRoleCeilings() {
     });
   });
 
-  return { primary, total };
+  roleCeilingsCache = { primary, total };
+  return roleCeilingsCache;
 }
 
 function normalizeFactor(rawValue, bounds) {
@@ -191,6 +202,83 @@ export function getFactorLevel(value) {
   if (value >= 54) return { key: "mid", label: "中等" };
   if (value >= 38) return { key: "low", label: "偏低" };
   return { key: "quiet", label: "缺席" };
+}
+
+function createSeededRandom(seed) {
+  let value = seed >>> 0;
+  return () => {
+    value = (value * 1664525 + 1013904223) >>> 0;
+    return value / 4294967296;
+  };
+}
+
+function getRarityLabel(percent) {
+  if (percent < 3.4) return "隐藏款";
+  if (percent < 4.6) return "稀有";
+  if (percent < 6.4) return "少见";
+  if (percent < 8.6) return "常见";
+  return "高发";
+}
+
+export function getRoleRarityStats(sampleSize = 3800) {
+  if (rarityStatsCache) return rarityStatsCache;
+
+  const counts = createRoleMap(0);
+  const random = createSeededRandom(20260903);
+
+  for (let sample = 0; sample < sampleSize; sample += 1) {
+    const anchor = roleProfiles[sample % roleProfiles.length];
+    const answers = {};
+
+    questionBank.forEach((question, questionIndex) => {
+      const weighted = question.answers.map((answer) => {
+        let weight = 1;
+        if (answer.roles[0] === anchor.code) weight += 1.25;
+        if (answer.roles.includes(anchor.code)) weight += 0.85;
+        if ((answer.factors.fish || 0) > 2 && sample % 7 === 0) weight += 0.45;
+        if ((answer.factors.boundary || 0) > 2 && sample % 11 === 0) weight += 0.45;
+        if ((answer.factors.chaos || 0) > 2 && sample % 13 === 0) weight += 0.45;
+        return weight;
+      });
+      const total = weighted.reduce((sum, value) => sum + value, 0);
+      let ticket = random() * total;
+      let picked = 0;
+      for (let index = 0; index < weighted.length; index += 1) {
+        ticket -= weighted[index];
+        if (ticket <= 0) {
+          picked = index;
+          break;
+        }
+      }
+      answers[questionIndex] = picked;
+    });
+
+    const result = pickType(scoreAnswers(answers));
+    counts[result.profile.code] += 1;
+  }
+
+  const sorted = roleProfiles
+    .map((profile) => {
+      const count = counts[profile.code] || 0;
+      const percent = Number(((count / sampleSize) * 100).toFixed(1));
+      return {
+        code: profile.code,
+        name: profile.name,
+        count,
+        percent,
+        label: getRarityLabel(percent)
+      };
+    })
+    .sort((left, right) => left.percent - right.percent);
+  const ranked = sorted.map((item, index) => ({ ...item, rank: index + 1 }));
+
+  rarityStatsCache = {
+    sampleSize,
+    byCode: Object.fromEntries(ranked.map((item) => [item.code, item])),
+    sorted: ranked
+  };
+
+  return rarityStatsCache;
 }
 
 export function buildTargetAnswers(profile) {

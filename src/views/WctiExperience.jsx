@@ -12,11 +12,37 @@ import {
   roleProfiles,
   shopProducts
 } from "../data/dgti.js";
-import { clamp, getFactorLevel, getTopFactors, pickType, scoreAnswers } from "../lib/dgtiScoring.js";
+import { clamp, getFactorLevel, getRoleRarityStats, getTopFactors, pickType, scoreAnswers } from "../lib/dgtiScoring.js";
 
 const profileByCode = Object.fromEntries(roleProfiles.map((profile) => [profile.code, profile]));
 const crowdSignals = ["6 / 38", "17 / 38", "29 / 38"];
 const publicArtStyleKeys = ["mbti"];
+const optionLetters = ["A", "B", "C", "D", "E"];
+
+function renderMarkedText(text, className = "answer-emphasis") {
+  if (text.includes("【")) {
+    const parts = text.split(/(【[^】]+】)/g).filter(Boolean);
+    return parts.map((part, index) => {
+      if (part.startsWith("【") && part.endsWith("】")) {
+        return <span className={className} key={`${part}-${index}`}>{part.slice(1, -1)}</span>;
+      }
+      return <React.Fragment key={`${part}-${index}`}>{part}</React.Fragment>;
+    });
+  }
+
+  const firstStop = ["，", "。", "：", "；"]
+    .map((mark) => text.indexOf(mark))
+    .filter((index) => index > 0)
+    .sort((a, b) => a - b)[0];
+  const emphasisEnd = firstStop ?? text.length;
+
+  return (
+    <>
+      <span className={className}>{text.slice(0, emphasisEnd)}</span>
+      {text.slice(emphasisEnd)}
+    </>
+  );
+}
 
 const roleDeepReadings = {
   CHOSEN: {
@@ -43,6 +69,11 @@ const roleDeepReadings = {
     why: "你对风险和责任流向很敏感，很多答案都体现出“先兜住现场”的本能。",
     stress: "你会在锅飞来之前预判落点，久了容易默认自己该接住。",
     advice: "锅盖可以举，责任线也要写清楚。"
+  },
+  SHIFTER: {
+    why: "你的答案常常指向“责任先拆清，再决定要不要接”。你不是单纯逃活，而是不接受模糊任务自动变成你的锅。",
+    stress: "越是临时加塞、口头承诺和群里找人背锅，你越会启动截图、流程和责任反弹。",
+    advice: "甩锅也要讲证据和分寸：把不该你的责任退回去，同时保留基本协作，不然容易变成工位天敌。"
   },
   FIREFIGHTER: {
     why: "你在高压场景下偏行动导向，倾向先止血、先救场、先让局面活下来。",
@@ -461,7 +492,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
           <p className="eyebrow">测测你是哪种工位生态位</p>
           <h1>不是测你是什么人，是测你在这坨职场生态里通常扮演什么角色。</h1>
           <p className="hero-lede">
-            {questionBank.length} 道职场情境题，匹配 19 个打工人人格。能自嘲、能互测、能收集羁绊，也能把本命角色做成陶瓷小人。
+            {questionBank.length} 道职场情境题，匹配 {roleProfiles.length} 个打工人人格。能自嘲、能互测、能收集羁绊，也能把本命角色做成陶瓷小人。
           </p>
           <div className="hero-actions">
             <button className="primary-action" type="button" onClick={onStart}>
@@ -639,7 +670,7 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
           </aside>
           <section className="question-card">
             <p className="eyebrow">{question.chapter}</p>
-            <h1>{title}</h1>
+            <h1>{renderMarkedText(title, "question-emphasis")}</h1>
             <div className="answer-grid">
               {question.answers.map((answer, index) => (
                 <button
@@ -653,7 +684,8 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
                   disabled={isAdvancing}
                   onClick={() => chooseAnswer(index)}
                 >
-                  <strong>{answer.text}</strong>
+                  <span className="answer-index" aria-hidden="true">{optionLetters[index]}</span>
+                  <span className="answer-main">{renderMarkedText(answer.text)}</span>
                 </button>
               ))}
             </div>
@@ -675,6 +707,8 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
 function ResultView({ identity, score, result, answers, setPhase, artStyle, setArtStyle, resultArchive, onSaveResult }) {
   const { profile, match, topRoles } = result;
   const group = groupMeta[profile.group];
+  const rarityStats = getRoleRarityStats();
+  const currentRarity = rarityStats.byCode[profile.code];
   const alias = identity.alias || `匿名工位-${identity.userId.slice(0, 3)}`;
   const topFactors = getTopFactors(score.factors, factorMeta.length);
   const bondCode = makeBondCode(identity, profile);
@@ -753,7 +787,8 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
         <div className="result-copy">
           <p className="eyebrow">{group.name}</p>
           <h1>{profile.name}</h1>
-          <p className="result-code">{profile.code} · 匹配度 {match}%</p>
+          <p className="result-code">{profile.code} · 匹配度 {match}% · 模拟稀有度 {currentRarity?.percent ?? "-"}%</p>
+          {currentRarity && <p className="rarity-badge">{currentRarity.label} · {roleProfiles.length} 型里第 {currentRarity.rank} 稀有</p>}
           <p className="result-sentence">{profile.tagline}</p>
           <p>{profile.copy}</p>
           <div className="tag-cloud">
@@ -851,13 +886,16 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
           <p className="eyebrow">候选人格</p>
           <h2>不是单题定命，是 {questionBank.length} 题综合匹配</h2>
           <div className="rank-list">
-            {topRoles.map(({ profile: ranked, score: rankedScore }, index) => (
+            {topRoles.map(({ profile: ranked, score: rankedScore }, index) => {
+              const rarity = rarityStats.byCode[ranked.code];
+              return (
               <button key={ranked.code} type="button" onClick={() => setPhase("atlas")}>
                 <span>{index + 1}</span>
                 <strong>{ranked.name}</strong>
-                <i>{rankedScore} 分</i>
+                <i>{rankedScore} 分 · {rarity?.label ?? "模拟中"} {rarity?.percent ?? "-"}%</i>
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
         <div className="result-panel product-callout">
@@ -950,7 +988,7 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
           <article>
             <h3>职场优势</h3>
             <p>{deepReading?.why}</p>
-            <p>你的优势通常会从「{profile.traits.join(" / ")}」里冒出来：别人还在辨认局面时，你已经用自己的方式开始处理空气里的问题。</p>
+          <p>你的优势通常会从「{profile.traits.join(" / ")}」里冒出来：别人还在辨认局面时，你已经用自己的方式开始处理眼前的问题。</p>
           </article>
           <article>
             <h3>容易踩的坑</h3>
@@ -998,11 +1036,13 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
 }
 
 function AtlasView({ setPhase, artStyle, setArtStyle }) {
+  const rarityStats = getRoleRarityStats();
+
   return (
     <main className="atlas-view page-enter">
       <section className="atlas-hero">
         <div className="section-heading">
-          <p className="eyebrow">19 个打工人生态位</p>
+          <p className="eyebrow">{roleProfiles.length} 个打工人生态位</p>
           <h1>角色不是为了判刑，是为了让大家认领自己的班味姿势。</h1>
           <p>每个角色都有梗锚点、动作、道具和商品化方向。先统一使用 DGTI 立绘，方便测试期集中看角色识别度。</p>
         </div>
@@ -1023,17 +1063,21 @@ function AtlasView({ setPhase, artStyle, setArtStyle }) {
           <div className="atlas-grid">
             {roleProfiles
               .filter((profile) => profile.group === groupKey)
-              .map((profile) => (
+              .map((profile) => {
+                const rarity = rarityStats.byCode[profile.code];
+                return (
                 <article className="type-card" key={profile.code}>
                   <CharacterArtwork profile={profile} artStyle={artStyle} size="small" />
                   <div>
                     <span>{profile.code}</span>
                     <h3>{profile.name}</h3>
                     <strong>{profile.meme}</strong>
+                    {rarity && <small className="type-rarity">{rarity.label} · 模拟 {rarity.percent}%</small>}
                     <p>{profile.tagline}</p>
                   </div>
                 </article>
-              ))}
+                );
+              })}
           </div>
         </section>
       ))}

@@ -588,8 +588,10 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
   const activeIndex = Math.min(currentIndex, questionBank.length - 1);
   const question = questionBank[activeIndex];
   const isCurrentAnswered = answers[activeIndex] !== undefined;
+  const selectedAnswer = isCurrentAnswered ? question.answers[answers[activeIndex]] : null;
   const progress = Math.round(((activeIndex + (isCurrentAnswered ? 1 : 0)) / questionBank.length) * 100);
   const title = question.title.replace("{crowdSignal}", crowdSignal);
+  const meterToast = selectedAnswer?.note ?? (activeIndex === 0 ? "第一反应最有班味，别替自己美化。" : "继续选，我在旁边偷偷记账。");
   const [isAdvancing, setIsAdvancing] = useState(false);
 
   useEffect(() => {
@@ -625,13 +627,14 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
           <aside className="office-meter">
             <div className="meter-dial">
               <strong>{progress}%</strong>
-              <span>班味识别中</span>
+              <span>已完成</span>
             </div>
-            <p>题目短一点，命中狠一点。每道题都会同时影响角色倾向、副标签和职场行为雷达。</p>
-            <div className="meter-tags">
-              {factorMeta.slice(0, 4).map(([key, label]) => (
-                <span key={key}>{label}</span>
-              ))}
+            <div className="meter-copy">
+              <strong>班味识别中</strong>
+              <span>第 {activeIndex + 1} / {questionBank.length} 题 · 选完自动跳转</span>
+            </div>
+            <div className={["meter-feedback", selectedAnswer ? "is-hot" : ""].filter(Boolean).join(" ")} aria-live="polite" key={`${activeIndex}-${answers[activeIndex] ?? "wait"}`}>
+              {meterToast}
             </div>
           </aside>
           <section className="question-card">
@@ -651,7 +654,6 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
                   onClick={() => chooseAnswer(index)}
                 >
                   <strong>{answer.text}</strong>
-                  <span>{answer.note}</span>
                 </button>
               ))}
             </div>
@@ -1596,7 +1598,7 @@ export function WctiExperience() {
         };
       });
       window.scrollTo({ top: 0, behavior: "smooth" });
-    }, 260);
+    }, 680);
   };
 
   const advanceQuiz = () => {

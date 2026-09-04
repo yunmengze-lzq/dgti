@@ -12,12 +12,15 @@ import {
   roleProfiles,
   shopProducts
 } from "../data/dgti.js";
+import { calculateBond, getBondImage, parseBondCode } from "../lib/dgtiBonds.js";
 import { clamp, getFactorLevel, getRoleRarityStats, getTopFactors, pickType, scoreAnswers } from "../lib/dgtiScoring.js";
 
 const profileByCode = Object.fromEntries(roleProfiles.map((profile) => [profile.code, profile]));
 const crowdSignals = ["6 / 38", "17 / 38", "29 / 38"];
 const publicArtStyleKeys = ["mbti"];
 const optionLetters = ["A", "B", "C", "D", "E"];
+const tipQrImage = "assets/dgti/shop/alipay-tip-qr.jpg";
+const tipPresets = [2.33, 6.66, 8.88, 18.88, 66.66];
 
 function renderMarkedText(text, className = "answer-emphasis") {
   if (text.includes("【")) {
@@ -147,6 +150,132 @@ const roleDeepReadings = {
   }
 };
 
+const rolePlaybooks = {
+  CHOSEN: {
+    shine: "最适合出现在项目没人认领、需求一团乱、老板只会说“你看着办”的现场。你会先把事情拆成能动的几步，让空气重新有方向。",
+    trap: "最大风险是被默认成“万能补位”。你越靠谱，别人越容易少想一步，最后全组都在等你兜底。",
+    cooperate: "给你明确目标、截止时间、拍板人和优先级，你能跑很快；只给一句“辛苦一下”，你会越干越像被献祭。"
+  },
+  COWHORSE: {
+    shine: "你胜在稳定，适合处理那些没人想做但必须有人做的脏活累活。嘴上可以骂，交付基本不会掉地上。",
+    trap: "你容易把“能忍”误会成“应该忍”。长期这样会从可靠变成麻木，最后连自己被消耗都懒得解释。",
+    cooperate: "别只夸你“靠谱”，要给资源、排期和明确分工。牛马不是永动机，饲料和休息都要算进项目成本。"
+  },
+  FISH: {
+    shine: "你擅长在无效信息里保护电量，能避开很多假紧急、假同步、假奋斗。真要动的时候，你通常会找最省力的路径。",
+    trap: "如果低功耗变成长期隐身，别人会把你当不在线。摸鱼没问题，问题是连最小交代都不留。",
+    cooperate: "给你清楚边界和交付口径，你会安静完成；频繁拉会、反复改口、制造表演型忙碌，会直接把你逼进小窗。"
+  },
+  TRAITOR: {
+    shine: "你很会读场面，知道什么时候该向上同步、什么时候该把话说得像能进周报。混乱场里，你能快速找到权力口径。",
+    trap: "你一旦过度向上，身边人会觉得你像老板插件。不是每句“格局打开”都需要被说出口。",
+    cooperate: "让你做对外沟通或向上包装很合适，但要提醒你保留同事侧事实，别把求生话术讲成价值观。"
+  },
+  POTMAN: {
+    shine: "事故现场你反应快，能先把锅盖举起来，不让问题继续乱飞。你适合做风险缓冲和临时止损。",
+    trap: "你太容易先接住，导致责任线没画清。锅接多了，别人会以为锅本来就是你的。",
+    cooperate: "请你救场时，要同步写清责任归属和后续复盘。你可以帮忙接一下，但不能永远背着走。"
+  },
+  SHIFTER: {
+    shine: "你擅长把模糊责任拆清楚：谁提的、谁拍的、谁验收、谁该接。很多糊涂账到你这里会被迫见光。",
+    trap: "如果只顾甩干净，容易显得阴险和不协作。责任不该你背，但关系也不一定要被你一脚踢翻。",
+    cooperate: "和你合作最好全程留痕、口径清楚。别拿“顺手”试探你，你会把顺手拆成流程单。"
+  },
+  FIREFIGHTER: {
+    shine: "系统报警、群里开席、客户催命时，你会先冲进去止血。你不是不怕，是知道再不动就真炸了。",
+    trap: "救火救多了，公司会把你当消防设施。每次都靠你临时补洞，说明机制已经烂了。",
+    cooperate: "让你救火可以，但救完必须复盘、补责任人、补预防机制。不然下一次还是同一个坑换个皮。"
+  },
+  CRISPY: {
+    shine: "你对消耗很敏感，能提前感知“这个活会把人干碎”。你的谨慎不是矫情，是血条雷达。",
+    trap: "你容易一边快碎了，一边还不好意思说。最后别人以为你还能撑，你自己已经掉线。",
+    cooperate: "给你稳定节奏、明确预期和缓冲时间，你会好很多。临时加塞、情绪施压、连环拉群最容易把你打碎。"
+  },
+  BOUNDARY: {
+    shine: "你很适合守范围、守下班、守验收标准。别人一句“很快的”，你会本能检查它是不是会快到下周。",
+    trap: "边界太硬时，别人可能只感受到拒绝，没听懂你的真实意思是“别靠消耗维持合作”。",
+    cooperate: "找你帮忙要说清范围和交换条件。你不是不能帮，是讨厌被“顺手文学”偷走人生。"
+  },
+  LEADERCARD: {
+    shine: "你能快速把散乱信息变成安排，适合推进、拍节奏、抓下一步。现场没主心骨时，你会自动上线。",
+    trap: "最大问题是压迫感可能比权力先到。你以为在推进，别人可能觉得被你管理了。",
+    cooperate: "让你负责推进可以，但要给真实授权和反馈入口。否则你容易拿着体验卡演成正式领导。"
+  },
+  PPTGOD: {
+    shine: "你擅长把混乱包装成清楚的叙事，尤其适合汇报、方案、复盘和对外讲故事。空气到你手里都能有页码。",
+    trap: "漂亮结构会让问题显得已经解决，但落地还在原地。PPT 飞剑很帅，别拿它替代行动。",
+    cooperate: "给你材料、目标听众和决策问题，你能做出好东西。只给一句“先出一版”，你会被迫炼空气。"
+  },
+  MEETINGBOT: {
+    shine: "你能把分歧拉到桌面上，适合处理多人协作和口径不一致。没人说话时，你会试图让事情流动起来。",
+    trap: "你容易把“开过会”误会成“推进了”。会越多，真正该拍板的人越可能躲在日历后面。",
+    cooperate: "会前给议题，会中定结论，会后写 owner。否则你只是给大家的日历增加工伤。"
+  },
+  WISHPOOL: {
+    shine: "你有想象力，能看到别人没想到的可能性，适合早期脑暴、产品方向和体验升级。",
+    trap: "你口中的“顺便”，常常是别人下周的加班。愿望如果没有优先级，就是需求污染。",
+    cooperate: "让你提想法很好，但每个愿望后面要跟预算、优先级和砍掉什么。神灯也要看排期。"
+  },
+  STIRRER: {
+    shine: "你能让死气沉沉的局面突然有反应，适合破冰、锐评、指出大家不敢说的问题。",
+    trap: "你点火很快，但火不一定烧在该烧的地方。场面活了，不代表事情变好了。",
+    cooperate: "需要你说真话时很好用，但要先约定边界。别把会议搅成连续剧，大家第二天还要上班。"
+  },
+  SHITMOUNTAIN: {
+    shine: "你适合处理历史遗留、旧系统、前任留下的坑。别人看到报错想跑，你会开始考古。",
+    trap: "你越会修旧坑，越容易被扔进更深的坑。修到最后，你可能也变成下一代口中的前任。",
+    cooperate: "给你时间、权限和旧资料，别只说“你研究一下”。屎山不是靠热爱移平的，是靠范围和记录。"
+  },
+  TWOFACE: {
+    shine: "你很懂场合和对象，能根据领导、同事、甲方切换表达。复杂关系里，你的生存能力很强。",
+    trap: "切换太丝滑时，别人会怀疑哪个版本才是真的你。话术救命，也可能透支信任。",
+    cooperate: "适合让你做沟通缓冲，但关键立场要提前说清楚。别让你一个人同时扮演两边的人。"
+  },
+  ALIVE: {
+    shine: "你能让群聊、会议和项目现场重新像有人类存在。适合热场、协调氛围、把冷掉的关系捞回来。",
+    trap: "你容易被默认负责气氛，最后别人都沉默，只有你在供电。活人感也会耗电。",
+    cooperate: "别只让你暖场，也要让你参与决策。你不是气氛挂件，你也有自己的判断。"
+  },
+  EMOHEALER: {
+    shine: "你能接住别人的情绪，适合团队低气压、同事崩溃、冲突后的修复。你会让人觉得还能撑一下。",
+    trap: "你容易把别人的崩溃都接到自己身上。情绪价值供应太久，会变成无薪客服。",
+    cooperate: "向你倾诉可以，但别把你当垃圾桶。真正的问题要回到流程、资源和责任上。"
+  },
+  SILENTGOD: {
+    shine: "你话少但信息密度高，适合查证据、找旧版本、处理需要安静判断的事。关键时刻你常有救命文件。",
+    trap: "你太安静时，功劳和边界都会被别人顺手拿走。沉默很强，但不能替你自动留名。",
+    cooperate: "给你明确问题和安静空间，你能产出硬东西。不要逼你在没证据时表态，你会直接静音。"
+  },
+  AICOWORKER: {
+    shine: "你稳定、礼貌、可预测，适合标准流程、重复沟通和需要低波动的协作。你很少制造额外情绪成本。",
+    trap: "太预制会让人觉得你没真实反应。稳定是优点，但过度模板会显得像自动回复。",
+    cooperate: "给你清晰模板和规则，你会很稳；需要创意或情绪判断时，要允许你跳出默认话术。"
+  }
+};
+
+const roleMisreads = {
+  CHOSEN: "别人容易把你的能干看成理所当然，忘了你也是被推上主线的人。",
+  COWHORSE: "别人会以为你骂归骂但总会做，于是默认你没边界。",
+  FISH: "别人会把你的省电看成摆烂，但你很多时候是在过滤无效消耗。",
+  TRAITOR: "别人会怀疑你站老板那边，其实你有时只是更早看懂了风向。",
+  POTMAN: "别人会以为锅到你身上最稳，久了连你自己都忘了锅从哪飞来的。",
+  SHIFTER: "别人会说你滑，其实你最讨厌的是不清不楚地被人写进责任链。",
+  FIREFIGHTER: "别人会以为你天生爱救火，但你只是受不了现场继续烂下去。",
+  CRISPY: "别人会以为你脆弱，其实你只是比别人更早听见身体和情绪报警。",
+  BOUNDARY: "别人会以为你冷，其实你是在保护合作不要靠透支维持。",
+  LEADERCARD: "别人会以为你想管人，其实你经常只是看不下去事情没人推进。",
+  PPTGOD: "别人会以为你只会包装，其实你是在给混乱找一个能被理解的入口。",
+  MEETINGBOT: "别人会以为你爱开会，其实你害怕的是没人拍板还假装推进。",
+  WISHPOOL: "别人会以为你只会许愿，其实你看见的是体验还能再往上走一点。",
+  STIRRER: "别人会以为你故意搅局，其实你常常先看见了桌面下的矛盾。",
+  SHITMOUNTAIN: "别人会以为你和烂摊子绑定，其实你只是太会从废墟里找线头。",
+  TWOFACE: "别人会以为你不真诚，其实你是在不同权力温度里保护自己。",
+  ALIVE: "别人会以为你永远有电，其实你只是先把场子救活了。",
+  EMOHEALER: "别人会以为你很好倾倒，其实你的耐心也有库存。",
+  SILENTGOD: "别人会以为你没意见，其实你只是不想在信息不全时乱开麦。",
+  AICOWORKER: "别人会以为你没灵魂，其实你是在用稳定降低协作摩擦。"
+};
+
 function createUserId() {
   return Math.random().toString(36).slice(2, 8).toUpperCase();
 }
@@ -171,6 +300,7 @@ function getFallbackState() {
     resultArchive: [],
     addresses: [],
     orders: [],
+    donations: [],
     crowdSignal: crowdSignals[Math.floor(Math.random() * crowdSignals.length)]
   };
 }
@@ -181,7 +311,7 @@ function readStoredState() {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return getFallbackState();
     const stored = { ...getFallbackState(), ...JSON.parse(raw) };
-    return { ...stored, artStyle: normalizeArtStyle(stored.artStyle) };
+    return { ...stored, phase: stored.phase === "atlas" ? "home" : stored.phase, artStyle: normalizeArtStyle(stored.artStyle) };
   } catch {
     return getFallbackState();
   }
@@ -214,91 +344,35 @@ function createResultArchiveEntry(identity, score, result, artStyle, answers) {
   };
 }
 
-function parseBondCode(value) {
-  const normalized = value.trim().toUpperCase();
-  const match = normalized.match(/^DGTI-([A-Z0-9]+)-([A-Z0-9]{4,8})$/);
-  if (!match) return null;
-  const profile = profileByCode[match[1]];
-  if (!profile) return null;
-  return { code: normalized, profile, userId: match[2] };
-}
-
-function getBondImage(slug, artStyle) {
-  const bond = bondCatalog.find((item) => item.slug === slug);
-  if (!bond) return "";
-  return bond.art?.[artStyle] || bond.art?.portrait || bond.image || "";
-}
-
-function calculateBond(selfProfile, friendProfile, relation) {
-  const gap =
-    factorMeta.reduce((sum, [key]) => sum + Math.abs(selfProfile.factors[key] - friendProfile.factors[key]), 0) /
-    factorMeta.length;
-  const score = Math.round(clamp(100 - gap, 42, 96));
-  const pairKey = [selfProfile.code, friendProfile.code].sort().join("|");
-  const pairSet = new Set([selfProfile.code, friendProfile.code]);
-  const pairBond = bondCatalog.find((bond) =>
-    bond.pairs.some((candidate) => candidate.slice().sort().join("|") === pairKey)
-  );
-
-  if (pairBond) {
-    return {
-      score: clamp(score + 6, 0, 99),
-      name: pairBond.name,
-      copy: pairBond.copy,
-      slug: pairBond.slug
-    };
-  }
-
-  if (selfProfile.code === friendProfile.code) {
-    return { score: clamp(score + 5, 0, 99), name: "同类互害", copy: "你们像同一张工位切片，互懂很快，互相带偏也很快。", slug: "same-type" };
-  }
-  if (pairSet.has("CRISPY") && pairSet.has("EMOHEALER")) {
-    const bond = bondCatalog.find((item) => item.slug === "mental-aid");
-    return { score: clamp(score + 8, 0, 99), name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (pairSet.has("WISHPOOL") && (pairSet.has("BOUNDARY") || pairSet.has("SILENTGOD"))) {
-    const bond = bondCatalog.find((item) => item.slug === "cyber-client-vendor");
-    return { score, name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (pairSet.has("SHITMOUNTAIN") && (pairSet.has("FIREFIGHTER") || pairSet.has("POTMAN") || pairSet.has("SILENTGOD"))) {
-    const bond = bondCatalog.find((item) => item.slug === "legacy-chain");
-    return { score: clamp(score + 6, 0, 99), name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (selfProfile.factors.bossy > 72 && friendProfile.factors.bossy > 72) {
-    const bond = bondCatalog.find((item) => item.slug === "mutual-leaders");
-    return { score, name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (selfProfile.factors.fish > 70 && friendProfile.factors.fish > 60) {
-    const bond = bondCatalog.find((item) => item.slug === "fish-partners");
-    return { score: clamp(score + 6, 0, 99), name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (selfProfile.factors.carry + friendProfile.factors.pot > 145 || friendProfile.factors.carry + selfProfile.factors.pot > 145) {
-    const bond = bondCatalog.find((item) => item.slug === "war-comrades");
-    return { score: clamp(score + 4, 0, 99), name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (
-    (selfProfile.factors.boundary > 80 && friendProfile.factors.bossy > 75) ||
-    (friendProfile.factors.boundary > 80 && selfProfile.factors.bossy > 75)
-  ) {
-    const bond = bondCatalog.find((item) => item.slug === "desk-nemesis");
-    return { score: clamp(score - 6, 0, 99), name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  if (selfProfile.factors.repair > 74 && friendProfile.factors.repair > 60) {
-    const bond = bondCatalog.find((item) => item.slug === "best-gay-friends");
-    return { score: clamp(score + 5, 0, 99), name: bond.name, copy: bond.copy, slug: bond.slug };
-  }
-  const fallback = bondCatalog.find((item) => item.slug === "passing-coworkers");
-  return score >= 66
-    ? { score, name: "工位同盟", copy: "你们节奏不同，但能在同一坨项目里找到分工。", slug: "desk-alliance" }
-    : { score, name: fallback.name, copy: fallback.copy, slug: fallback.slug };
-}
-
 function formatMoney(value) {
   return `¥${value.toFixed(0)}`;
 }
 
+function formatTipMoney(value) {
+  const amount = Number(value) || 0;
+  return `¥${amount.toFixed(amount % 1 === 0 ? 0 : 2)}`;
+}
+
 function createOrderNo() {
   return `DGTI${Date.now().toString().slice(-8)}${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
+}
+
+function createTipNo() {
+  return `TIP${Date.now().toString().slice(-7)}${Math.random().toString(36).slice(2, 4).toUpperCase()}`;
+}
+
+function getDonationStats(donations = []) {
+  return donations.reduce(
+    (stats, donation) => {
+      const amount = Number(donation.amount) || 0;
+      return {
+        count: stats.count + 1,
+        total: stats.total + amount,
+        max: Math.max(stats.max, amount)
+      };
+    },
+    { count: 0, total: 0, max: 0 }
+  );
 }
 
 function StyleToggle({ artStyle, onChange }) {
@@ -396,6 +470,32 @@ function AxisPreferenceBar({ item, value, index }) {
   );
 }
 
+function CompactAxisBar({ item, value, index }) {
+  const reading = getAxisReading(item, value);
+  const rightScore = Math.round(clamp(value, 0, 100));
+  const leftScore = 100 - rightScore;
+  const isRight = rightScore >= leftScore;
+  return (
+    <div className="compact-axis-row">
+      <div>
+        <span>{String(index + 1).padStart(2, "0")} · {reading.axisName}</span>
+        <strong>{reading.label}</strong>
+      </div>
+      <div className="compact-axis-balance" aria-label={`${reading.axisName} ${reading.leftLabel} ${leftScore} 分，${reading.rightLabel} ${rightScore} 分`}>
+        <div className="compact-axis-labels">
+          <span className={!isRight ? "is-active" : ""}>{reading.leftLabel} {leftScore}</span>
+          <span className={isRight ? "is-active" : ""}>{rightScore} {reading.rightLabel}</span>
+        </div>
+        <div className="compact-axis-track">
+          <i className={!isRight ? "axis-left is-active" : "axis-left"} style={{ width: `${leftScore}%` }} />
+          <i className={isRight ? "axis-right is-active" : "axis-right"} style={{ width: `${rightScore}%` }} />
+        </div>
+      </div>
+      <em>{reading.letter}</em>
+    </div>
+  );
+}
+
 function getFactorExtremes(factors) {
   const ranked = getTopFactors(factors, factorMeta.length);
   return {
@@ -411,35 +511,50 @@ function getAxisSummary(axisReadings) {
     .join("、");
 }
 
+function getDominantAxisDetails(axisReadings) {
+  return axisReadings
+    .map(({ item, value }) => {
+      const reading = getAxisReading(item, value);
+      const rightScore = Math.round(clamp(value, 0, 100));
+      return {
+        ...reading,
+        leftScore: 100 - rightScore,
+        rightScore,
+        strength: Math.abs(value - 50)
+      };
+    })
+    .sort((left, right) => right.strength - left.strength);
+}
+
 function buildAdvicePoints(profile, score, topFactors, axisReadings) {
   const points = [
-    `把你的“${profile.meme}”当成识别信号，不要当成固定人设。它说明你在某些场景里会自然滑向这个模式，但不是说你只能这样工作。`,
-    `你当前最强的信号是${topFactors.slice(0, 3).map((item) => `「${item.label}」`).join("、")}，适合用来判断你在团队里最容易被看见、被需要、也最容易被消耗的地方。`
+    `别把“${profile.meme}”当人设锁死，它只是你最容易露馅的工位反应。`,
+    `你最突出的信号是${topFactors.slice(0, 3).map((item) => `「${item.label}」`).join("、")}，也是最容易被同事和老板盯上的地方。`
   ];
 
   if ((score.factors.boundary || 0) < 45) {
-    points.push("边界感偏弱时，建议把“我可以”后面补上范围、时间和交付标准，不然很容易从帮忙变成默认归你。");
+    points.push("少裸奔式答应。说“我可以”之前，先补范围、时间和交付标准。");
   } else if ((score.factors.boundary || 0) >= 70) {
-    points.push("边界感较强时，你适合做规则和范围的守门人，但表达上可以多给一个替代方案，减少别人觉得你只是在拒绝。");
+    points.push("你很会守门，但拒绝时丢一个替代方案，会少很多无效拉扯。");
   }
 
   if ((score.factors.fish || 0) >= 64) {
-    points.push("摸鱼功力偏高不是坏事，说明你会保护电量；但最好保留一个可见的小闭环，让别人知道你不是消失，而是在低功耗推进。");
+    points.push("摸鱼可以，消失不行。留一个可见小闭环，低功耗也算推进。");
   }
 
   if ((score.factors.bossy || 0) >= 64) {
-    points.push("领导味偏高时，你很适合做推进和对齐；注意少用空泛大词，多给责任人、截止时间和下一步。");
+    points.push("领导味上来时少讲大词，多给谁来做、何时交、下一步。");
   }
 
   if ((score.factors.repair || 0) >= 64) {
-    points.push("修复力高的人容易成为团队情绪缓冲垫，建议学会区分“我愿意听”和“这件事需要机制解决”。");
+    points.push("别把自己做成情绪客服。能听是一回事，该走机制还是要走机制。");
   }
 
   const structure = axisReadings.find(({ item }) => item[0] === "structure")?.value ?? 50;
   if (structure < 42) {
-    points.push("你的节奏更偏连滚带爬补，创意和应变会更自然；遇到多人协作时，可以提前写一个最低限度的钉单线。");
+    points.push("你能边跑边补，但多人协作时至少留一条钉单线，别让大家靠心电感应。");
   } else if (structure > 58) {
-    points.push("你的节奏更偏钉死闭环，适合管理复杂事项；要给别人留一点变化空间，不然协作会显得太紧。");
+    points.push("你适合钉闭环，但别把每个变化都当事故，留一点转弯空间。");
   }
 
   return points.slice(0, 5);
@@ -450,7 +565,6 @@ function Header({ phase, setPhase, isComplete, artStyle, setArtStyle }) {
     ["home", "首页"],
     ["quiz", "开测"],
     ["result", "结果"],
-    ["atlas", "图鉴"],
     ["bonds", "羁绊"],
     ["shop", "小店"]
   ];
@@ -482,8 +596,9 @@ function Header({ phase, setPhase, isComplete, artStyle, setArtStyle }) {
   );
 }
 
-function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, artStyle, setArtStyle }) {
+function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, artStyle }) {
   const heroProfiles = [profileByCode.FISH, profileByCode.BOUNDARY, profileByCode.LEADERCARD, profileByCode.EMOHEALER];
+  const scrollToRoleAtlas = () => document.getElementById("home-role-atlas")?.scrollIntoView({ behavior: "smooth", block: "start" });
 
   return (
     <main className="dgti-home page-enter">
@@ -498,7 +613,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
             <button className="primary-action" type="button" onClick={onStart}>
               {hasAnswers ? "继续开测" : "开始测试"}
             </button>
-            <button className="secondary-action" type="button" onClick={() => setPhase("atlas")}>
+            <button className="secondary-action" type="button" onClick={scrollToRoleAtlas}>
               先看角色图鉴
             </button>
             <button className="secondary-action" type="button" onClick={() => setPhase("shop")}>
@@ -518,7 +633,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
               key={profile.code}
               type="button"
               className={`hero-card hero-card-${index + 1}`}
-              onClick={() => setPhase("atlas")}
+              onClick={scrollToRoleAtlas}
             >
               <CharacterArtwork profile={profile} artStyle={artStyle} size="medium" />
               <strong>{profile.name}</strong>
@@ -594,23 +709,10 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
         </div>
       </section>
 
-      <section className="dgti-section split-section">
-        <div className="section-heading">
-          <p className="eyebrow">当前视觉</p>
-          <h2>DGTI 立绘先作为默认人格形象</h2>
-          <p>角色图鉴、结果页、分享卡和商品预览先统一使用这一套形象，避免测试期风格来回跳。</p>
-        </div>
-      </section>
-
-      <section className="dgti-section group-strip" aria-label="五个打工人阵营">
-        {Object.entries(groupMeta).map(([key, group]) => (
-          <article key={key} style={{ "--group-color": group.color, "--group-bg": group.bg }}>
-            <span>{group.short}</span>
-            <h3>{group.name}</h3>
-            <p>{group.copy}</p>
-          </article>
-        ))}
-      </section>
+      <RoleAtlasSection
+        artStyle={artStyle}
+        setPhase={setPhase}
+      />
     </main>
   );
 }
@@ -704,7 +806,7 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
   );
 }
 
-function ResultView({ identity, score, result, answers, setPhase, artStyle, setArtStyle, resultArchive, onSaveResult }) {
+function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, resultArchive, onSaveResult }) {
   const { profile, match, topRoles } = result;
   const group = groupMeta[profile.group];
   const rarityStats = getRoleRarityStats();
@@ -712,11 +814,12 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
   const alias = identity.alias || `匿名工位-${identity.userId.slice(0, 3)}`;
   const topFactors = getTopFactors(score.factors, factorMeta.length);
   const bondCode = makeBondCode(identity, profile);
-  const resultId = makeResultId(identity, profile);
   const deepReading = roleDeepReadings[profile.code];
+  const playbook = rolePlaybooks[profile.code];
   const axisReadings = axisMeta.map((item) => ({ item, value: score.axes?.[item[0]] ?? 50 }));
   const factorExtremes = getFactorExtremes(score.factors);
   const axisSummary = getAxisSummary(axisReadings);
+  const dominantAxes = getDominantAxisDetails(axisReadings).slice(0, 2);
   const advicePoints = buildAdvicePoints(profile, score, topFactors, axisReadings);
   const captureRef = useRef(null);
   const [shareFeedback, setShareFeedback] = useState("");
@@ -739,6 +842,11 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
   const saveResult = () => {
     onSaveResult();
     announce("当前结果已保存到本机档案。");
+  };
+
+  const openRoleAtlas = () => {
+    setPhase("home");
+    window.setTimeout(() => document.getElementById("home-role-atlas")?.scrollIntoView({ behavior: "smooth", block: "start" }), 120);
   };
 
   const shareResult = async () => {
@@ -787,7 +895,7 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
         <div className="result-copy">
           <p className="eyebrow">{group.name}</p>
           <h1>{profile.name}</h1>
-          <p className="result-code">{profile.code} · 匹配度 {match}% · 模拟稀有度 {currentRarity?.percent ?? "-"}%</p>
+          <p className="result-code">{profile.code} · 匹配度 {match}% · 稀有度参考 {currentRarity?.percent ?? "-"}%</p>
           {currentRarity && <p className="rarity-badge">{currentRarity.label} · {roleProfiles.length} 型里第 {currentRarity.rank} 稀有</p>}
           <p className="result-sentence">{profile.tagline}</p>
           <p>{profile.copy}</p>
@@ -809,10 +917,7 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
             <button className="secondary-action" type="button" onClick={captureLongShot} disabled={isCapturing}>
               {isCapturing ? "生成中" : "保存长截图"}
             </button>
-            <button className="primary-action shop-action" type="button" onClick={() => setPhase("shop")}>
-              买同款小人
-            </button>
-            <button className="secondary-action" type="button" onClick={() => setPhase("atlas")}>
+            <button className="secondary-action" type="button" onClick={openRoleAtlas}>
               查看图鉴
             </button>
           </div>
@@ -822,15 +927,11 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
       <section className="dgti-section result-vault-section">
         <article className="result-pass" style={{ "--result-color": group.color, "--result-bg": group.bg }}>
           <div>
-            <p className="eyebrow">工位档案卡</p>
-            <h2>{alias} 的本机结果凭证</h2>
-            <p>测试结果会随答题记录保存在本机。想和别人获得羁绊，只需要把羁绊码发给对方，不需要实名或手机号。</p>
+            <p className="eyebrow">羁绊凭证</p>
+            <h2>把这串码甩给同事，看看你们是什么关系。</h2>
+            <p>不实名，不绑公司。对方测完后互填羁绊码，就能开出战友、搭子、天敌或上下游孽缘。</p>
           </div>
           <div className="pass-code-grid">
-            <div>
-              <span>结果 ID</span>
-              <strong>{resultId}</strong>
-            </div>
             <div>
               <span>羁绊码</span>
               <strong>{bondCode}</strong>
@@ -843,12 +944,6 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
             <button className="secondary-action" type="button" onClick={() => copyText(buildResultShareText(identity, result), "结果文案已复制。")}>
               复制分享文案
             </button>
-            <button className="secondary-action" type="button" onClick={shareResult}>
-              系统分享
-            </button>
-            <button className="secondary-action" type="button" onClick={captureLongShot} disabled={isCapturing}>
-              {isCapturing ? "截图生成中" : "下载长截图"}
-            </button>
             <button className="secondary-action" type="button" onClick={() => setPhase("bonds")}>
               去收集羁绊
             </button>
@@ -857,10 +952,10 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
         </article>
         <aside className="archive-panel">
           <p className="eyebrow">本机存档</p>
-          <h2>已保存 {resultArchive.length} 次结果</h2>
+          <h2>保存这次班味</h2>
           <div className="archive-list">
             {resultArchive.length === 0 ? (
-              <p className="empty-state">还没有手动保存的档案。保存后可以对比自己哪次最像牛马，哪次最像领导体验卡。</p>
+              <p className="empty-state">还没存档。今天像牛马，明天像领导体验卡，都可以留下案底。</p>
             ) : (
               resultArchive.slice(0, 5).map((entry) => (
                 <article key={entry.id}>
@@ -875,70 +970,36 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
       </section>
 
       <section className="dgti-section result-grid">
+        <div className="result-panel compact-axis-panel">
+          <p className="eyebrow">四维评估</p>
+          <h2>工位雷达</h2>
+          <div className="compact-axis-stack">
+            {axisReadings.map(({ item, value }, index) => (
+              <CompactAxisBar key={item[0]} item={item} value={value} index={index} />
+            ))}
+          </div>
+        </div>
         <div className="result-panel">
-          <p className="eyebrow">副标签</p>
-          <h2>{alias} 的隐藏属性</h2>
-          {topFactors.map((item) => (
+          <p className="eyebrow">最明显的班味</p>
+          <h2>别全看，先看前三个</h2>
+          {topFactors.slice(0, 3).map((item) => (
             <FactorBar key={item.key} item={item} />
           ))}
         </div>
         <div className="result-panel">
-          <p className="eyebrow">候选人格</p>
-          <h2>不是单题定命，是 {questionBank.length} 题综合匹配</h2>
+          <p className="eyebrow">差点成为</p>
+          <h2>你的备选工位皮肤</h2>
           <div className="rank-list">
-            {topRoles.map(({ profile: ranked, score: rankedScore }, index) => {
+            {topRoles.slice(1, 4).map(({ profile: ranked, score: rankedScore }, index) => {
               const rarity = rarityStats.byCode[ranked.code];
               return (
-              <button key={ranked.code} type="button" onClick={() => setPhase("atlas")}>
-                <span>{index + 1}</span>
+              <button key={ranked.code} type="button" onClick={openRoleAtlas}>
+                <span>{index + 2}</span>
                 <strong>{ranked.name}</strong>
                 <i>{rankedScore} 分 · {rarity?.label ?? "模拟中"} {rarity?.percent ?? "-"}%</i>
               </button>
               );
             })}
-          </div>
-        </div>
-        <div className="result-panel product-callout">
-          <p className="eyebrow">实体化锚点</p>
-          <h2>{profile.artifact}</h2>
-          <p>下单时会把人格名、角色代码、梗锚点和当前画风写入订单备注。地址与答卷仍然分开保存。</p>
-          <button className="secondary-action" type="button" onClick={() => setPhase("shop")}>
-            做成陶瓷小人
-          </button>
-        </div>
-      </section>
-
-      <section className="dgti-section result-depth">
-        <div className="result-panel axis-panel">
-          <p className="eyebrow">职场行为雷达</p>
-          <h2>你的工位行为模型</h2>
-          <p className="panel-note">这不是把 MBTI 字母硬套进职场，而是把答案归纳成四个更通用的工作行为维度；每个维度再给一个打工人梗锚点，方便你截图时一眼记住。</p>
-          <div className="axis-stack">
-            {axisReadings.map(({ item, value }, index) => (
-              <AxisPreferenceBar key={item[0]} item={item} value={value} index={index} />
-            ))}
-          </div>
-        </div>
-        <div className="result-panel diagnosis-panel">
-          <p className="eyebrow">结果拆解</p>
-          <h2>为什么你会测成 {profile.name}</h2>
-          <div className="analysis-grid">
-            <article>
-              <span>命中逻辑</span>
-              <p>{deepReading?.why}</p>
-            </article>
-            <article>
-              <span>压力模式</span>
-              <p>{deepReading?.stress}</p>
-            </article>
-            <article>
-              <span>自救建议</span>
-              <p>{deepReading?.advice}</p>
-            </article>
-            <article>
-              <span>定位说明</span>
-              <p>这是有结构参考的娱乐型职场测评，用来描述稳定倾向、社交认同和羁绊互动，不等同心理诊断或职业能力评估。</p>
-            </article>
           </div>
         </div>
       </section>
@@ -947,26 +1008,21 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
         <div className="section-heading">
           <p className="eyebrow">人格详解</p>
           <h2>{profile.name} 的工位说明书</h2>
-          <p>这一段专门解释结果，不只负责好笑，也负责让你知道自己为什么会这样、适合怎么合作、哪里需要保护自己。</p>
-        </div>
-        <div className="manual-tabs" aria-label="人格详解阅读标签">
-          <span className="active">人格详解</span>
-          <span>工作方式</span>
-          <span>协作建议</span>
-          <span>自救指南</span>
+          <p>不是一句“你很牛马”就结束。这里拆你的启动方式、消耗来源、协作雷区和自救动作。</p>
         </div>
         <div className="manual-layout">
           <article className="manual-main">
             <span>{profile.code} · {group.name}</span>
             <h3>核心画像</h3>
             <p>
-              {alias} 的主模式是「{profile.name}」：{profile.copy}
-              这不是给你判刑，而是在说你遇到项目、关系、压力和边界时，最容易自动启动的那套工位反应。
+              {alias} 这次测出来是「{profile.name}」：{profile.copy}
             </p>
             <p>
-              从这次答案看，你的职场行为雷达更接近 {axisSummary}。再叠加
-              {factorExtremes.top.map((item) => `「${item.label}${item.value}」`).join("、")} 这些高频信号，
-              所以系统会把你推向这个角色，而不是只按某一道题定命。
+              关键证据是 {factorExtremes.top.map((item) => `「${item.label}${item.value}」`).join("、")}。
+              你的选择更偏 {axisSummary}，所以不像随机抽签，更像工位本能露馅。
+            </p>
+            <p>
+              这类人最典型的状态不是一直这样，而是在特定压力下会自动切到这套模式：有人甩锅、需求失控、会议空转、同事崩溃，或者任务突然没人认领。
             </p>
           </article>
           <aside className="manual-side">
@@ -986,25 +1042,52 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
         </div>
         <div className="manual-grid">
           <article>
-            <h3>职场优势</h3>
+            <span>01</span>
+            <h3>触发场景</h3>
+            <p>{playbook?.shine}</p>
+            <p>只要现场出现“没人认领、边界模糊、情绪快炸、需求开始漂移”这类情况，你就容易从普通同事切到这个人格模式。</p>
+          </article>
+          <article>
+            <span>02</span>
+            <h3>默认动作</h3>
             <p>{deepReading?.why}</p>
-          <p>你的优势通常会从「{profile.traits.join(" / ")}」里冒出来：别人还在辨认局面时，你已经用自己的方式开始处理眼前的问题。</p>
-          </article>
-          <article>
-            <h3>容易踩的坑</h3>
-            <p>{deepReading?.stress}</p>
-            <p>当你一直用同一种模式扛事，角色优势就会反过来消耗你。越熟练的生存方式，越需要定期检查是不是已经变成惯性。</p>
-          </article>
-          <article>
-            <h3>协作说明书</h3>
             <p>
-              和你合作时，最好把目标、边界、优先级和情绪成本都说清楚。你不怕复杂，但你讨厌无意义的消耗；
-              你可以进入状态，但不应该被默认无限续航。
+              你最容易露出来的动作是 {factorExtremes.top.map((item) => `「${item.label} ${item.value}」`).join("、")}。
+              这几个分数高，说明你不是只在某一题装了一下，而是多种场景里都反复选到了同一种反应。
             </p>
-            <p>适合你的羁绊入口是先交换羁绊码，再看双方是互补、同频，还是会变成工位天敌。</p>
           </article>
           <article>
-            <h3>行动建议</h3>
+            <span>03</span>
+            <h3>四维解释</h3>
+            <p>
+              你最明显的两条轴是 {dominantAxes.map((axis) => `「${axis.axisName}：${axis.label} ${Math.round(axis.value)}」`).join("、")}。
+              它们解释的是你的做事入口：先保护血条，还是先冲上场；先查证据，还是先搭故事；先接住现场，还是先切清责任。
+            </p>
+            <p>所以最终人格不是靠一句梗硬贴，而是由角色命中、副标签和四维倾向一起推出来。</p>
+          </article>
+          <article>
+            <span>04</span>
+            <h3>别人容易误会</h3>
+            <p>{roleMisreads[profile.code]}</p>
+            <p>这就是这个人格最容易被贴错标签的地方：别人只看到你的外显动作，看不到你为什么这么反应。</p>
+          </article>
+          <article>
+            <span>05</span>
+            <h3>消耗来源</h3>
+            <p>{deepReading?.stress}</p>
+            <p>{playbook?.trap}</p>
+            <p>一旦这种模式被团队当成默认配置，你会开始从“发挥优势”变成“被优势反噬”。</p>
+          </article>
+          <article>
+            <span>06</span>
+            <h3>协作方式</h3>
+            <p>{playbook?.cooperate}</p>
+            <p>和你合作，目标、边界、优先级要说人话。你能配合，但不适合被一句“辛苦一下”无限续杯。</p>
+            <p>想看你和别人是搭子还是天敌，就去互换羁绊码。</p>
+          </article>
+          <article>
+            <span>07</span>
+            <h3>自救建议</h3>
             <ul>
               {advicePoints.map((point) => (
                 <li key={point}>{point}</li>
@@ -1013,46 +1096,27 @@ function ResultView({ identity, score, result, answers, setPhase, artStyle, setA
           </article>
         </div>
       </section>
-
-      <section className="dgti-section answer-recap">
-        <div className="section-heading">
-          <p className="eyebrow">答题轨迹</p>
-          <h2>你的工位反应切片</h2>
-        </div>
-        <div className="timeline-list">
-          {questionBank.map((question, index) => {
-            const answer = question.answers[answers[index]];
-            return (
-              <article key={`${question.chapter}-${index}`}>
-                <span>{String(index + 1).padStart(2, "0")} · {question.chapter}</span>
-                <strong>{answer?.text || "未作答"}</strong>
-              </article>
-            );
-          })}
-        </div>
-      </section>
     </main>
   );
 }
 
-function AtlasView({ setPhase, artStyle, setArtStyle }) {
+function RoleAtlasSection({ setPhase, artStyle }) {
   const rarityStats = getRoleRarityStats();
 
   return (
-    <main className="atlas-view page-enter">
-      <section className="atlas-hero">
+    <section className="dgti-section home-role-atlas" id="home-role-atlas">
+      <div className="atlas-hero">
         <div className="section-heading">
           <p className="eyebrow">{roleProfiles.length} 个打工人生态位</p>
-          <h1>角色不是为了判刑，是为了让大家认领自己的班味姿势。</h1>
-          <p>每个角色都有梗锚点、动作、道具和商品化方向。先统一使用 DGTI 立绘，方便测试期集中看角色识别度。</p>
+          <h1>打工人角色图鉴</h1>
+          <p>每个角色都有自己的梗锚点、动作道具和工位气质。先看谁最像你，再去测试看系统怎么判。</p>
         </div>
         <div className="atlas-actions">
-          <StyleToggle artStyle={artStyle} onChange={setArtStyle} />
           <button className="primary-action" type="button" onClick={() => setPhase("quiz")}>
             去测试
           </button>
         </div>
-      </section>
+      </div>
       {Object.entries(groupMeta).map(([groupKey, group]) => (
         <section className="atlas-group" key={groupKey} style={{ "--group-color": group.color, "--group-bg": group.bg }}>
           <div className="group-title">
@@ -1081,7 +1145,7 @@ function AtlasView({ setPhase, artStyle, setArtStyle }) {
           </div>
         </section>
       ))}
-    </main>
+    </section>
   );
 }
 
@@ -1095,33 +1159,9 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
   const selfCode = makeBondCode(identity, result.profile);
   const parsedFriend = parseBondCode(friendCode);
   const preview = parsedFriend ? calculateBond(result.profile, parsedFriend.profile, relation) : null;
-  const suggestions = useMemo(() => {
-    const selfProfileCode = result.profile.code;
-    const directMatches = bondCatalog.flatMap((bond) =>
-      bond.pairs
-        .filter((pair) => pair.includes(selfProfileCode))
-        .map((pair) => {
-          const otherCode = pair.find((code) => code !== selfProfileCode) || selfProfileCode;
-          return { bond, profile: profileByCode[otherCode] };
-        })
-    );
-    const fallbackMatches = [
-      { bond: bondCatalog.find((item) => item.slug === "fish-partners"), profile: profileByCode.FISH },
-      { bond: bondCatalog.find((item) => item.slug === "best-gay-friends"), profile: profileByCode.EMOHEALER },
-      { bond: bondCatalog.find((item) => item.slug === "pot-allies"), profile: profileByCode.POTMAN },
-      { bond: bondCatalog.find((item) => item.slug === "passing-coworkers"), profile: profileByCode.AICOWORKER }
-    ];
-    const seen = new Set();
-    return [...directMatches, ...fallbackMatches]
-      .filter((item) => item.bond && item.profile && item.profile.code !== selfProfileCode)
-      .filter((item) => {
-        const key = `${item.bond.slug}-${item.profile.code}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      })
-      .slice(0, 4);
-  }, [result.profile.code]);
+  const collectedSlugs = useMemo(() => new Set(bonds.map((bond) => bond.slug)), [bonds]);
+  const previewImage = preview ? getBondImage(preview.slug, artStyle) : "";
+  const unlockedCount = bondCatalog.filter((bond) => collectedSlugs.has(bond.slug)).length;
 
   const copyCode = async () => {
     try {
@@ -1149,7 +1189,9 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
       relation,
       friendAlias: friendAlias.trim() || "未命名工位",
       friendCode: parsedFriend.code,
+      selfType: result.profile.name,
       friendType: parsedFriend.profile.name,
+      friendTypeCode: parsedFriend.profile.code,
       score: bond.score,
       name: bond.name,
       copy: bond.copy,
@@ -1161,27 +1203,37 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
     setFeedback("已收入本机羁绊账本。");
   };
 
-  const applySuggestion = (item, index) => {
-    setFriendAlias(item.profile.name);
-    setFriendCode(`DGTI-${item.profile.code}-DEMO${index + 1}`);
-    setRelation(item.bond.slug === "cyber-client-vendor" ? "甲乙方" : "同事");
-    setFeedback(`已填入 ${item.bond.name} 试算对象。`);
-  };
-
   return (
     <main className="bonds-view page-enter">
       <section className="bond-hero">
         <div>
           <p className="eyebrow">轻量绑定用户之间的羁绊</p>
           <h1>用羁绊码连接，不用实名、手机号或公司名。</h1>
-          <p>当前原型把关系记录存在本机。正式上线时再做双向确认、群体地图和隐私分层。</p>
+          <p>把你的羁绊码发给对方，对方测完把 TA 的码发回来，输入后就能生成一张可保存的关系卡。</p>
         </div>
         <div className="self-code-panel">
-          <span>你的羁绊码</span>
-          <strong>{selfCode}</strong>
+          <div className="self-pass-card">
+            <div className="self-pass-art">
+              <CharacterArtwork profile={result.profile} artStyle={artStyle} size="small" />
+            </div>
+            <div>
+              <span>我的打工人人格</span>
+              <strong>{result.profile.name}</strong>
+              <p>{result.profile.meme}</p>
+            </div>
+          </div>
+          <div className="self-code-block">
+            <span>我的羁绊码</span>
+            <strong>{selfCode}</strong>
+          </div>
           <button className="secondary-action" type="button" onClick={copyCode}>
             {copied ? "已复制" : "复制羁绊码"}
           </button>
+          <div className="bond-progress">
+            <span>图鉴进度</span>
+            <strong>{unlockedCount} / {bondCatalog.length}</strong>
+            <i style={{ width: `${(unlockedCount / bondCatalog.length) * 100}%` }} />
+          </div>
         </div>
       </section>
 
@@ -1202,43 +1254,45 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
       <section className="dgti-section bond-lab">
         <div className="section-heading">
           <p className="eyebrow">收集一段关系</p>
-          <h2>输入对方的 DGTI 羁绊码</h2>
-          <p>这是用户主动输入的关系，不自动读取通讯录、不抓取社交账号，也不推测真实身份。</p>
+          <h2>交换羁绊卡</h2>
+          <p>填入对方发来的羁绊码，右侧会先开出关系卡；确认是这位同事，再收入本机账本。</p>
         </div>
-        <div className="bond-form">
-          <label className="field-control">
-            <span>对方代号，可选</span>
-            <input value={friendAlias} onChange={(event) => setFriendAlias(event.target.value)} placeholder="比如：隔壁工位、项目甲方" />
-          </label>
-          <label className="field-control">
-            <span>对方羁绊码</span>
-            <input value={friendCode} onChange={(event) => setFriendCode(event.target.value)} placeholder="DGTI-FISH-ABC123" />
-          </label>
-          <label className="field-control">
-            <span>现实关系</span>
-            <select value={relation} onChange={(event) => setRelation(event.target.value)}>
-              {relationOptions.map((option) => (
-                <option key={option}>{option}</option>
-              ))}
-            </select>
-          </label>
-          <button className="primary-action" type="button" onClick={addBond}>
-            收入羁绊账本
-          </button>
-        </div>
-        <div className="bond-suggestions" aria-label="快捷试算羁绊">
-          {suggestions.map((item, index) => (
-            <button key={`${item.bond.slug}-${item.profile.code}`} type="button" onClick={() => applySuggestion(item, index)}>
-              <span>{item.bond.name}</span>
-              <strong>{item.profile.name}</strong>
-            </button>
-          ))}
-        </div>
-        {preview && (
-          <article className="bond-preview">
-            {getBondImage(preview.slug, artStyle) && (
+        <div className="bond-lab-grid">
+          <div className="bond-form-panel">
+            <div className="bond-form">
+              <label className="field-control">
+                <span>对方代号，可选</span>
+                <input value={friendAlias} onChange={(event) => setFriendAlias(event.target.value)} placeholder="比如：隔壁工位、项目甲方" />
+              </label>
+              <label className="field-control">
+                <span>对方羁绊码</span>
+                <input value={friendCode} onChange={(event) => setFriendCode(event.target.value)} placeholder="DGTI-FISH-ABC123" />
+              </label>
+              <label className="field-control">
+                <span>现实关系</span>
+                <select value={relation} onChange={(event) => setRelation(event.target.value)}>
+                  {relationOptions.map((option) => (
+                    <option key={option}>{option}</option>
+                  ))}
+                </select>
+              </label>
+              <button className="primary-action" type="button" onClick={addBond}>
+                收入羁绊账本
+              </button>
+            </div>
+            <div className="bond-form-note">
+              {preview ? (
+                <span>已识别：{parsedFriend.profile.name}，这张关系卡可以保存了。</span>
+              ) : (
+                <span>格式示例：DGTI-FISH-ABC123。只存在本机，不读取通讯录。</span>
+              )}
+            </div>
+            {feedback && <p className="form-feedback" role="status">{feedback}</p>}
+          </div>
+          <article className={preview ? "bond-preview" : "bond-preview bond-preview-empty"} data-unlocked={preview && collectedSlugs.has(preview.slug) ? "true" : "false"}>
+            {preview && previewImage && (
               <img
-                src={getBondImage(preview.slug, artStyle)}
+                src={previewImage}
                 alt={`${preview.name} 羁绊关系图`}
                 loading="lazy"
                 onError={(event) => {
@@ -1246,18 +1300,20 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
                 }}
               />
             )}
-            <span>{parsedFriend.profile.name}</span>
-            <h3>{preview.name} · {preview.score}%</h3>
-            <p>{preview.copy}</p>
+            <div>
+              <span>{preview ? `${result.profile.name} × ${parsedFriend.profile.name}` : "等待对方羁绊码"}</span>
+              <h3>{preview ? `${preview.name} · ${preview.score}%` : "输入后开卡"}</h3>
+              <p>{preview ? preview.copy : "这里会展示关系图、匹配度和一句能发给对方看的吐槽，确认后再保存。"}</p>
+              {preview && <small>{collectedSlugs.has(preview.slug) ? "图鉴已解锁，再收一位也算新关系。" : "收入账本后会点亮这张羁绊图。"}</small>}
+            </div>
           </article>
-        )}
-        {feedback && <p className="form-feedback" role="status">{feedback}</p>}
+        </div>
       </section>
 
       <section className="dgti-section bond-book">
         <div className="section-heading">
           <p className="eyebrow">本机羁绊账本</p>
-          <h2>已收集 {bonds.length} 段关系</h2>
+          <h2>已保存 {bonds.length} 段关系</h2>
         </div>
         {bonds.length > 0 && (
           <button className="text-action danger" type="button" onClick={onClearBonds}>
@@ -1266,7 +1322,7 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
         )}
         <div className="bond-list">
           {bonds.length === 0 ? (
-            <p className="empty-state">还没有羁绊。复制自己的码，发给朋友或同事，等对方测完再互相审判。</p>
+            <p className="empty-state">还没有保存的羁绊。输入对方羁绊码，先生成卡片，再收入账本。</p>
           ) : (
             bonds.map((bond) => (
               <article className="bond-item" key={bond.id}>
@@ -1281,19 +1337,137 @@ function BondsView({ identity, result, bonds, onAddBond, onClearBonds, artStyle 
                   />
                 )}
                 <span>{bond.relation}</span>
-                <h3>{bond.friendAlias} · {bond.friendType}</h3>
-                <strong>{bond.name} / {bond.score}%</strong>
+                <h3>{bond.name} · {bond.score}%</h3>
+                <strong>{bond.selfType || result.profile.name} × {bond.friendAlias}（{bond.friendType}）</strong>
                 <p>{bond.copy}</p>
               </article>
             ))
           )}
         </div>
       </section>
+
+      <section className="dgti-section bond-gallery">
+        <div className="section-heading">
+          <p className="eyebrow">羁绊图鉴</p>
+          <h2>已解锁 {unlockedCount} / {bondCatalog.length} 种羁绊</h2>
+          <p>每保存一段新的关系，就会点亮对应羁绊图。未解锁的先保持神秘，等同事发码来开。</p>
+        </div>
+        <div className="bond-gallery-grid">
+          {bondCatalog.map((bond) => {
+            const unlocked = collectedSlugs.has(bond.slug);
+            const image = getBondImage(bond.slug, artStyle);
+            return (
+              <article className={unlocked ? "bond-gallery-card is-unlocked" : "bond-gallery-card"} key={bond.slug}>
+                {image && <img src={image} alt={`${bond.name} 羁绊图`} loading="lazy" />}
+                <div>
+                  <span>{unlocked ? "已解锁" : "待收集"}</span>
+                  <h3>{bond.name}</h3>
+                  <p>{unlocked ? bond.copy : "交换羁绊码后点亮。"}</p>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
     </main>
   );
 }
 
-function ShopView({ identity, result, isComplete, addresses, orders, onSaveAddress, onPlaceOrder, setPhase, artStyle }) {
+function TipJar({ identity, profile, donations, onAddDonation }) {
+  const [amount, setAmount] = useState("8.88");
+  const [message, setMessage] = useState("");
+  const [thanks, setThanks] = useState("");
+  const stats = getDonationStats(donations);
+  const alias = identity.alias || `匿名工位-${identity.userId.slice(0, 3)}`;
+  const lastDonation = donations[0];
+
+  const recordDonation = () => {
+    const value = Number.parseFloat(amount);
+    if (!Number.isFinite(value) || value <= 0) {
+      setThanks("先填一个有效金额，不然系统只能识别到一阵心意。");
+      return;
+    }
+    const normalizedAmount = Math.round(value * 100) / 100;
+    const donation = {
+      id: `tip-${Date.now()}`,
+      tipNo: createTipNo(),
+      amount: normalizedAmount,
+      message: message.trim(),
+      alias,
+      profileName: profile.name,
+      profileCode: profile.code,
+      createdAt: new Date().toISOString()
+    };
+    onAddDonation(donation);
+    setMessage("");
+    setThanks(`收到 ${formatTipMoney(normalizedAmount)} 的蚂蚁森林能量，感谢 ${alias} 给打工人 TI 续命。`);
+  };
+
+  return (
+    <section className="dgti-section tip-jar-section" id="dgti-tip-jar">
+      <div className="tip-jar-card">
+        <div className="tip-copy">
+          <p className="eyebrow">打赏回血站</p>
+          <h2>觉得测得有点准，就给项目投喂一口能量。</h2>
+          <p>扫码后网页无法自动验账。你可以把金额登记进本机账本，页面会统计支持次数和金额，并回一句像样的感谢。</p>
+          <div className="tip-stats" aria-label="本机打赏统计">
+            <span><strong>{stats.count}</strong> 次支持</span>
+            <span><strong>{formatTipMoney(stats.total)}</strong> 本机累计</span>
+            <span><strong>{stats.max ? formatTipMoney(stats.max) : "待点亮"}</strong> 单次最高</span>
+          </div>
+        </div>
+
+        <div className="tip-qr-panel">
+          <img src={tipQrImage} alt="支付宝打赏收款码" loading="lazy" />
+          <span>打开支付宝扫一扫</span>
+        </div>
+
+        <div className="tip-form">
+          <div className="tip-presets" aria-label="选择打赏金额">
+            {tipPresets.map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                className={Number(amount) === preset ? "active" : ""}
+                onClick={() => setAmount(String(preset))}
+              >
+                {formatTipMoney(preset)}
+              </button>
+            ))}
+          </div>
+          <label className="field-control">
+            <span>实际打赏金额</span>
+            <input
+              value={amount}
+              onChange={(event) => setAmount(event.target.value)}
+              inputMode="decimal"
+              aria-label="实际打赏金额"
+            />
+          </label>
+          <label className="field-control">
+            <span>感谢回执备注</span>
+            <input
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              maxLength={36}
+              placeholder="比如：摸鱼圣体前来续命"
+            />
+          </label>
+          <button className="primary-action" type="button" onClick={recordDonation}>
+            我已打赏，登记回血
+          </button>
+          {(thanks || lastDonation) && (
+            <p className="tip-thanks" role="status">
+              {thanks || `${lastDonation.alias} 刚刚支持了 ${formatTipMoney(lastDonation.amount)}，项目血条 +1。`}
+            </p>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ShopView({ identity, result, isComplete, addresses, orders, donations, onSaveAddress, onPlaceOrder, onAddDonation, setPhase, artStyle }) {
   const [selectedSku, setSelectedSku] = useState("ceramic-figure");
   const [checkoutStep, setCheckoutStep] = useState("product");
   const [selectedAddressId, setSelectedAddressId] = useState(addresses[0]?.id || "");
@@ -1380,6 +1554,9 @@ function ShopView({ identity, result, isComplete, addresses, orders, onSaveAddre
             <button className="secondary-action" type="button" onClick={() => setCheckoutStep("address")}>
               管理地址
             </button>
+            <button className="secondary-action" type="button" onClick={() => document.getElementById("dgti-tip-jar")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+              支持一下
+            </button>
           </div>
         </div>
         <div className="shop-stage">
@@ -1404,6 +1581,8 @@ function ShopView({ identity, result, isComplete, addresses, orders, onSaveAddre
           </button>
         ))}
       </section>
+
+      <TipJar identity={identity} profile={profile} donations={donations} onAddDonation={onAddDonation} />
 
       {checkoutStep === "product" && (
         <section className="dgti-section shop-section">
@@ -1641,7 +1820,9 @@ export function WctiExperience() {
           currentIndex: Math.min(questionIndex + 1, questionBank.length - 1)
         };
       });
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (questionIndex >= questionBank.length - 1) {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }, 680);
   };
 
@@ -1653,13 +1834,11 @@ export function WctiExperience() {
       return;
     }
     setState((current) => ({ ...current, currentIndex: Math.min(current.currentIndex + 1, questionBank.length - 1) }));
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const previousQuestion = () => {
     window.clearTimeout(quizAdvanceTimer.current);
     setState((current) => ({ ...current, currentIndex: Math.max(current.currentIndex - 1, 0) }));
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const resetQuiz = () => {
@@ -1695,7 +1874,6 @@ export function WctiExperience() {
           setPhase={setPhase}
           hasAnswers={Object.keys(state.answers).length > 0}
           artStyle={state.artStyle}
-          setArtStyle={setArtStyle}
         />
       )}
       {state.phase === "quiz" && (
@@ -1715,7 +1893,6 @@ export function WctiExperience() {
           identity={state.identity}
           score={score}
           result={result}
-          answers={state.answers}
           setPhase={setPhase}
           artStyle={state.artStyle}
           setArtStyle={setArtStyle}
@@ -1731,10 +1908,8 @@ export function WctiExperience() {
           setPhase={setPhase}
           hasAnswers={Object.keys(state.answers).length > 0}
           artStyle={state.artStyle}
-          setArtStyle={setArtStyle}
         />
       )}
-      {state.phase === "atlas" && <AtlasView setPhase={setPhase} artStyle={state.artStyle} setArtStyle={setArtStyle} />}
       {state.phase === "bonds" && isComplete && (
         <BondsView
           identity={state.identity}
@@ -1753,7 +1928,6 @@ export function WctiExperience() {
           setPhase={setPhase}
           hasAnswers={Object.keys(state.answers).length > 0}
           artStyle={state.artStyle}
-          setArtStyle={setArtStyle}
         />
       )}
       {state.phase === "shop" && (
@@ -1763,8 +1937,10 @@ export function WctiExperience() {
           isComplete={isComplete}
           addresses={state.addresses || []}
           orders={state.orders || []}
+          donations={state.donations || []}
           onSaveAddress={(address) => setState((current) => ({ ...current, addresses: [address, ...(current.addresses || [])].slice(0, 8) }))}
           onPlaceOrder={(order) => setState((current) => ({ ...current, orders: [order, ...(current.orders || [])].slice(0, 12) }))}
+          onAddDonation={(donation) => setState((current) => ({ ...current, donations: [donation, ...(current.donations || [])].slice(0, 50) }))}
           setPhase={setPhase}
           artStyle={state.artStyle}
         />

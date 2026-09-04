@@ -8,6 +8,7 @@
     "build": "vite build",
     "package:html": "npm run build && node scripts/package-dgti-html.mjs && cd output && rm -f dgti-html-preview.zip && zip -qr dgti-html-preview.zip dgti-html-preview",
     "validate:dgti": "node scripts/validate-dgti-scoring.mjs",
+    "validate:dgti:bonds": "node scripts/validate-dgti-bonds.mjs",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {

@@ -15,7 +15,9 @@ import {
 import { calculateBond, getBondImage, parseBondCode } from "../lib/dgtiBonds.js";
 import { clamp, getFactorLevel, getTopFactors, pickType, scoreAnswers } from "../lib/dgtiScoring.js";
 import { QUESTIONNAIRE_VERSION } from "../data/dgtiResearch.js";
-import { CommunityView, ResearchNotes, ResultContribution } from "../components/DgtiCommunity.jsx";
+import { CommunityView, ResearchNotes, ResultSync } from "../components/DgtiCommunity.jsx";
+import { FeedbackAdmin } from "../components/FeedbackAdmin.jsx";
+import { useAutomaticResultSave, useDgtiStatistics } from "../lib/useDgtiStatistics.js";
 
 const profileByCode = Object.fromEntries(roleProfiles.map((profile) => [profile.code, profile]));
 const crowdSignals = ["6 / 38", "17 / 38", "29 / 38"];
@@ -289,6 +291,8 @@ function normalizeArtStyle(artStyle) {
 function getFallbackState() {
   return {
     phase: "home",
+    autoUpload: true,
+    collectionNoticeVersion: null,
     questionnaireVersion: QUESTIONNAIRE_VERSION,
     artStyle: "mbti",
     identity: {
@@ -634,7 +638,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
             <span>仅供娱乐</span>
             <span>不做心理诊断</span>
             <span>结果保存在本机</span>
-            <span>匿名统计自愿参与</span>
+            <span>统计保存可关闭</span>
           </div>
         </div>
         <div className="hero-stage" aria-label="打工人人格角色预览">
@@ -657,7 +661,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
         <div className="section-heading">
           <p className="eyebrow">轻量绑定</p>
           <h2>先给你的工位命格留一个本地代号</h2>
-          <p>不要求登录，不收手机号。代号、答题草稿和羁绊保存在本机；只有你主动提交的匿名结果与意见会进入整体统计。</p>
+          <p>不要求登录，不收手机号。代号、答题草稿和羁绊保存在本机；答完默认同步角色与四维摘要，用于整体统计，可在保存设置中关闭。</p>
         </div>
         <div className="identity-grid">
           <label className="field-control">
@@ -729,7 +733,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
   );
 }
 
-function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, onPrevious, onReset, setPhase }) {
+function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, onPrevious, onReset, setPhase, autoUpload }) {
   const activeIndex = Math.min(currentIndex, questionBank.length - 1);
   const question = questionBank[activeIndex];
   const isCurrentAnswered = answers[activeIndex] !== undefined;
@@ -768,6 +772,7 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
         <div className="progress-track" aria-hidden="true">
           <i style={{ width: `${Math.max(progress, 4)}%` }} />
         </div>
+        {activeIndex === 0 && <p className="quiz-save-notice">{autoUpload ? "继续答题即同意完成后自动保存角色与四维摘要，用于整体统计；不上传昵称和羁绊。" : "本次结果仅保存在当前浏览器。"}<button type="button" className="text-action" onClick={() => setPhase("community")}>保存设置</button></p>}
         <div className="quiz-layout">
           <aside className="office-meter">
             <div className="meter-dial">
@@ -818,8 +823,9 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
   );
 }
 
-function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, resultArchive, onSaveResult }) {
+function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, resultArchive, onSaveResult, statistics, statisticsError }) {
   const { profile, match, topRoles } = result;
+  const sample = statistics?.roles.find((row) => row.code === profile.code);
   const group = groupMeta[profile.group];
   const alias = identity.alias || `匿名工位-${identity.userId.slice(0, 3)}`;
   const topFactors = getTopFactors(score.factors, factorMeta.length);
@@ -905,8 +911,13 @@ function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, 
         <div className="result-copy">
           <p className="eyebrow">{group.name}</p>
           <h1>{profile.name}</h1>
-          <p className="result-code">{profile.code} · 角色倾向分 {match} / 100</p>
-          <p className="rarity-badge">描述这次作答的倾向，不是准确率或能力分</p>
+          <p className="result-code">{profile.code}</p>
+          <dl className="result-live-metrics">
+            <div><dt>角色匹配度</dt><dd>{match}<small>%</small></dd></div>
+            <div><dt>同类占比</dt><dd>{statistics?.count ? sample.percent : "—"}<small>{statistics?.count ? "%" : "暂无样本"}</small></dd></div>
+            <div><dt>稀有排名{sample?.tied ? " · 并列" : ""}</dt><dd>{sample?.rarityRank ?? "—"}<small>{sample?.rarityRank ? ` / ${statistics.observedTypes}` : "暂无样本"}</small></dd></div>
+          </dl>
+          <p className="result-metric-note">匹配度是作答倾向，不是准确率。{statisticsError ? "统计暂时不可用。" : statistics?.count ? `占比来自本版 ${statistics.count} 个参与设备；稀有排名仅比较已出现的角色，人数越少排名越靠前。` : "真实作答积累后显示占比与排名。"}</p>
           <p className="result-sentence">{profile.tagline}</p>
           <p>{profile.copy}</p>
           <div className="tag-cloud">
@@ -1789,6 +1800,8 @@ export function WctiExperience() {
   const score = useMemo(() => scoreAnswers(state.answers), [state.answers]);
   const result = useMemo(() => pickType(score), [score]);
   const isComplete = Object.keys(state.answers).length >= questionBank.length;
+  const sync = useAutomaticResultSave({ answers: state.answers, enabled: state.autoUpload && state.collectionNoticeVersion === QUESTIONNAIRE_VERSION, complete: isComplete });
+  const { statistics, error: statisticsError } = useDgtiStatistics(state.phase === "result" && isComplete);
 
   const setPhase = (phase) => {
     window.clearTimeout(quizAdvanceTimer.current);
@@ -1814,7 +1827,7 @@ export function WctiExperience() {
   };
 
   const setAnswer = (questionIndex, answerIndex) => {
-    setState((current) => ({ ...current, answers: { ...current.answers, [questionIndex]: answerIndex } }));
+    setState((current) => ({ ...current, collectionNoticeVersion: QUESTIONNAIRE_VERSION, answers: { ...current.answers, [questionIndex]: answerIndex } }));
   };
 
   const selectAnswerAndAdvance = (questionIndex, answerIndex) => {
@@ -1899,6 +1912,7 @@ export function WctiExperience() {
           onPrevious={previousQuestion}
           onReset={resetQuiz}
           setPhase={setPhase}
+          autoUpload={state.autoUpload}
         />
       )}
       {state.phase === "result" && isComplete && (
@@ -1911,9 +1925,11 @@ export function WctiExperience() {
           setArtStyle={setArtStyle}
           resultArchive={state.resultArchive || []}
           onSaveResult={saveCurrentResult}
+          statistics={statistics}
+          statisticsError={statisticsError}
         />
       )}
-      {state.phase === "result" && isComplete && <ResultContribution answers={state.answers} onViewCommunity={() => setPhase("community")} />}
+      {state.phase === "result" && isComplete && <ResultSync sync={sync} onViewCommunity={() => setPhase("community")} />}
       {state.phase === "result" && !isComplete && (
         <HomeView
           identity={state.identity}
@@ -1952,7 +1968,8 @@ export function WctiExperience() {
           onAddDonation={(donation) => setState((current) => ({ ...current, donations: [donation, ...(current.donations || [])].slice(0, 50) }))}
         /><section className="dgti-section"><button className="secondary-action" type="button" onClick={() => setPhase("community")}>看整体统计 / 留下意见</button></section></main>
       )}
-      {state.phase === "community" && <CommunityView setPhase={setPhase} />}
+      {state.phase === "community" && <CommunityView setPhase={setPhase} autoUpload={state.autoUpload} onAutoUploadChange={(autoUpload) => setState((current) => ({ ...current, autoUpload, collectionNoticeVersion: QUESTIONNAIRE_VERSION }))} />}
+      {state.phase === "admin" && <FeedbackAdmin setPhase={setPhase} />}
       {state.phase !== "quiz" && <footer className="community-footer"><button className="text-action" type="button" onClick={() => setPhase("community")}>使用统计与意见</button><button className="text-action" type="button" onClick={() => setPhase("support")}>支持作者</button><span>原创情境测试 · 娱乐与自我观察</span></footer>}
     </div>
   );

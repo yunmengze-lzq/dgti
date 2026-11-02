@@ -22,6 +22,9 @@ export function openStore(filename) {
     );
     CREATE INDEX IF NOT EXISTS feedback_participant ON feedback(participant, created_at);
   `);
+  if (!db.prepare("PRAGMA table_info(feedback)").all().some((column) => column.name === "status")) {
+    db.exec("ALTER TABLE feedback ADD COLUMN status TEXT NOT NULL DEFAULT 'new'");
+  }
   return {
     close: () => db.close(),
     saveResult(participant, score, role, hash) {
@@ -37,7 +40,7 @@ export function openStore(filename) {
       if (existing) return existing.participant === participant ? "saved" : "conflict";
       const recent = db.prepare("SELECT COUNT(*) AS n FROM feedback WHERE participant=? AND created_at>=?").get(participant, new Date(Date.now() - 86400000).toISOString());
       if (recent.n >= 5) return "limited";
-      db.prepare("INSERT INTO feedback VALUES (?, ?, ?, ?, ?, ?, ?, ?)").run(data.id, participant, QUESTIONNAIRE_VERSION, data.category, data.rating, data.question ?? null, data.message, new Date().toISOString());
+      db.prepare("INSERT INTO feedback (id, participant, version, category, rating, question, message, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)").run(data.id, participant, QUESTIONNAIRE_VERSION, data.category, data.rating, data.question ?? null, data.message, new Date().toISOString());
       return "saved";
     },
     removeParticipant(participant) {
@@ -55,7 +58,20 @@ export function openStore(filename) {
       return { ...summarizeResults(rows), version: QUESTIONNAIRE_VERSION, kind: "real", updatedAt: new Date().toISOString(), feedback: { count: rating.count, averageRating: rating.count ? Math.round(rating.averageRating * 10) / 10 : null, categories: feedbackCategories.map(([key]) => ({ key, count: categories.find((r) => r.category === key)?.count || 0 })) } };
     },
     exportFeedback() {
-      return db.prepare("SELECT version, category, rating, question, message, created_at FROM feedback ORDER BY created_at DESC").all();
+      return db.prepare("SELECT version, category, rating, question, message, status, created_at FROM feedback ORDER BY created_at DESC").all();
+    },
+    listFeedback({ category, status, page }) {
+      const clauses = [], args = [];
+      if (category) { clauses.push("category=?"); args.push(category); }
+      if (status) { clauses.push("status=?"); args.push(status); }
+      const where = clauses.length ? ` WHERE ${clauses.join(" AND ")}` : "";
+      const total = db.prepare(`SELECT COUNT(*) AS n FROM feedback${where}`).get(...args).n;
+      const unread = db.prepare("SELECT COUNT(*) AS n FROM feedback WHERE status='new'").get().n;
+      const items = db.prepare(`SELECT id, version, category, rating, question, message, status, created_at FROM feedback${where} ORDER BY created_at DESC, id DESC LIMIT 25 OFFSET ?`).all(...args, (page - 1) * 25);
+      return { items, total, unread, page, pages: Math.max(1, Math.ceil(total / 25)) };
+    },
+    markFeedback(id, status) {
+      return db.prepare("UPDATE feedback SET status=? WHERE id=?").run(status, id).changes > 0;
     }
   };
 }

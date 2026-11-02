@@ -1,5 +1,6 @@
-import { createHash } from "node:crypto";
-import { resolve } from "node:path";
+import { createHash, timingSafeEqual } from "node:crypto";
+import { readFileSync } from "node:fs";
+import { resolve, dirname, join } from "node:path";
 import { questionBank } from "../src/data/dgti.js";
 import { QUESTIONNAIRE_VERSION, feedbackCategories } from "../src/data/dgtiResearch.js";
 import { pickType, scoreAnswers } from "../src/lib/dgtiScoring.js";
@@ -7,7 +8,7 @@ import { openStore } from "./store.js";
 
 const hash = (value) => createHash("sha256").update(value).digest("hex");
 const categories = new Set(feedbackCategories.map(([key]) => key));
-export function createApi({ filename = process.env.DGTI_DB_PATH || resolve("var/dgti.sqlite"), allowedOrigin = process.env.DGTI_PUBLIC_ORIGIN, rateLimit = 120 } = {}) {
+export function createApi({ filename = process.env.DGTI_DB_PATH || resolve("var/dgti.sqlite"), allowedOrigin = process.env.DGTI_PUBLIC_ORIGIN, rateLimit = 120, adminKey = process.env.DGTI_ADMIN_KEY } = {}) {
   const store = openStore(filename);
   const clients = new Map();
   const reply = (res, status, body) => {
@@ -15,7 +16,8 @@ export function createApi({ filename = process.env.DGTI_DB_PATH || resolve("var/
     res.end(JSON.stringify(body));
   };
   async function handler(req, res, next) {
-    const path = (req.url || "").split("?")[0];
+    const url = new URL(req.url || "/", "http://localhost");
+    const path = url.pathname;
     const endpoint = path.replace(/^\/(?:dgti\/)?api\//, "");
     if (endpoint === path) { if (next) next(); else reply(res, 404, { error: "接口不存在" }); return; }
     try {
@@ -27,6 +29,23 @@ export function createApi({ filename = process.env.DGTI_DB_PATH || resolve("var/
       client.count += 1;
       clients.set(ip, client);
       if (client.count > rateLimit) { reply(res, 429, { error: "操作太频繁，请稍后再试" }); return; }
+      const isAdmin = endpoint === "admin/feedback";
+      if (isAdmin) {
+        let key = adminKey;
+        if (!key && filename !== ":memory:") {
+          try { key = readFileSync(join(dirname(filename), "admin-key.txt"), "utf8").trim(); } catch { /* No admin access until configured. */ }
+        }
+        if (!key || key.length < 32) { reply(res, 503, { error: "尚未配置管理密钥，请在服务器运行 npm run setup:admin" }); return; }
+        const supplied = (req.headers.authorization || "").replace(/^Bearer /, "");
+        if (!timingSafeEqual(Buffer.from(hash(supplied), "hex"), Buffer.from(hash(key), "hex"))) { reply(res, 401, { error: "管理密钥不正确" }); return; }
+        if (req.method === "GET") {
+          const category = url.searchParams.get("category") || "";
+          const status = url.searchParams.get("status") || "";
+          const page = Number(url.searchParams.get("page") || 1);
+          if ((category && !categories.has(category)) || (status && !["new", "read"].includes(status)) || !Number.isInteger(page) || page < 1 || page > 100000) { reply(res, 400, { error: "筛选条件不正确" }); return; }
+          reply(res, 200, store.listFeedback({ category, status, page })); return;
+        }
+      }
       if (req.method === "GET" && endpoint === "stats") { reply(res, 200, store.statistics()); return; }
       if (!["POST", "DELETE"].includes(req.method)) { reply(res, 405, { error: "不支持的请求方式" }); return; }
       const origin = req.headers.origin;
@@ -42,6 +61,11 @@ export function createApi({ filename = process.env.DGTI_DB_PATH || resolve("var/
       }
       let data;
       try { data = JSON.parse(Buffer.concat(chunks).toString()); } catch { reply(res, 400, { error: "数据格式错误" }); return; }
+      if (isAdmin && req.method === "POST") {
+        if (!data || !/^[a-f0-9-]{36}$/.test(data.id || "") || !["new", "read"].includes(data.status)) { reply(res, 400, { error: "意见状态不正确" }); return; }
+        const saved = store.markFeedback(data.id, data.status);
+        reply(res, saved ? 200 : 404, saved ? { ok: true } : { error: "该意见已被撤回或不存在" }); return;
+      }
       if (!data || typeof data.token !== "string" || !/^[a-f0-9]{64}$/.test(data.token)) { reply(res, 400, { error: "匿名凭证无效，请刷新重试" }); return; }
       const participant = hash(data.token);
       if (req.method === "DELETE" && endpoint === "me") {
@@ -49,7 +73,7 @@ export function createApi({ filename = process.env.DGTI_DB_PATH || resolve("var/
         reply(res, 200, { ok: true }); return;
       }
       if (req.method !== "POST" || !["results", "feedback"].includes(endpoint)) { reply(res, 404, { error: "接口不存在" }); return; }
-      if (data.consent !== true) { reply(res, 400, { error: "请先同意匿名提交" }); return; }
+      if (data.consent !== true) { reply(res, 400, { error: "尚未确认数据保存提示" }); return; }
       if (data.version !== QUESTIONNAIRE_VERSION) { reply(res, 409, { error: "题库已更新，请刷新后重新测试" }); return; }
       if (endpoint === "results") {
         const answers = data.answers;

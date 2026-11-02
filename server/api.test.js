@@ -10,12 +10,13 @@ import { openStore } from "./store.js";
 import { QUESTIONNAIRE_VERSION, questionReferences } from "../src/data/dgtiResearch.js";
 import { roleProfiles, questionBank } from "../src/data/dgti.js";
 import { buildTargetAnswers } from "../src/lib/dgtiScoring.js";
-import { getDemoStatistics } from "../src/lib/dgtiStatistics.js";
+import { getDemoStatistics, summarizeResults } from "../src/lib/dgtiStatistics.js";
 
 test("anonymous results and feedback persist, deduplicate, and withdraw without exposing records", async () => {
   const dir = await mkdtemp(join(tmpdir(), "dgti-api-"));
   const filename = join(dir, "test.sqlite");
-  const api = createApi({ filename });
+  const adminKey = "test-admin-key-".repeat(4);
+  const api = createApi({ filename, adminKey });
   const server = createServer(api.handler);
   await new Promise((done) => server.listen(0, "127.0.0.1", done));
   const base = `http://127.0.0.1:${server.address().port}/dgti/api/`;
@@ -56,6 +57,19 @@ test("anonymous results and feedback persist, deduplicate, and withdraw without 
     assert.equal(stats.feedback.count, 1);
     assert.equal(stats.feedback.averageRating, 3);
     assert.equal(JSON.stringify(stats).includes(feedback.message), false);
+    assert.equal((await request("admin/feedback", null, "GET")).status, 401);
+    assert.equal((await request("admin/feedback", null, "GET", { Authorization: "Bearer wrong" })).status, 401);
+    const auth = { Authorization: `Bearer ${adminKey}` };
+    let inbox = await request("admin/feedback?category=question&status=new&page=1", null, "GET", auth);
+    assert.equal(inbox.body.total, 1);
+    assert.equal(inbox.body.items[0].message, feedback.message);
+    assert.equal("participant" in inbox.body.items[0], false);
+    assert.equal((await request("admin/feedback", { id: feedback.id, status: "read" }, "POST", auth)).status, 200);
+    inbox = await request("admin/feedback?status=new", null, "GET", auth);
+    assert.equal(inbox.body.total, 0);
+    assert.equal(inbox.body.unread, 0);
+    assert.equal((await request("admin/feedback?page=-1", null, "GET", auth)).status, 400);
+    assert.equal((await request("admin/feedback", { id: feedback.id, status: "bad" }, "POST", auth)).status, 400);
     for (let i = 0; i < 4; i++) assert.equal((await request("feedback", { ...feedback, id: randomUUID() })).status, 200);
     assert.equal((await request("feedback", { ...feedback, id: randomUUID() })).status, 429);
     const reopened = openStore(filename);
@@ -70,6 +84,18 @@ test("anonymous results and feedback persist, deduplicate, and withdraw without 
   } finally {
     await new Promise((done) => server.close(done)); api.close(); await rm(dir, { recursive: true, force: true });
   }
+});
+
+test("rarity ranks only observed roles, with shared ranks for ties", () => {
+  const codes = roleProfiles.slice(0, 3).map((p) => p.code);
+  const rows = [codes[0], codes[1], codes[2], codes[2]].map((role) => ({ role, axes: {} }));
+  const stats = summarizeResults(rows);
+  assert.equal(stats.observedTypes, 3);
+  assert.equal(stats.roles.find((r) => r.code === codes[0]).rarityRank, 1);
+  assert.equal(stats.roles.find((r) => r.code === codes[0]).tied, true);
+  assert.equal(stats.roles.find((r) => r.code === codes[2]).rarityRank, 3);
+  assert.equal(stats.roles.find((r) => r.count === 0).rarityRank, null);
+  assert.equal(summarizeResults([]).observedTypes, 0);
 });
 
 test("100 demonstration cases stay separate and every question has a reference mapping", () => {

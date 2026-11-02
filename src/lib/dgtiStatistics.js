@@ -4,12 +4,17 @@ import { buildTargetAnswers, pickType, scoreAnswers } from "./dgtiScoring.js";
 
 export function summarizeResults(rows) {
   const count = rows.length;
+  const counts = roleProfiles.map((profile) => rows.filter((row) => row.role === profile.code).length);
+  const observedTypes = counts.filter((n) => n > 0).length;
   return {
     count,
     attempts: rows.reduce((sum, row) => sum + (row.attempts || 1), 0),
-    roles: roleProfiles.map((profile) => {
-      const total = rows.filter((row) => row.role === profile.code).length;
-      return { code: profile.code, count: total, percent: count ? Math.round(total / count * 1000) / 10 : 0 };
+    observedTypes,
+    roles: roleProfiles.map((profile, i) => {
+      const total = counts[i];
+      return { code: profile.code, count: total, percent: count ? Math.round(total / count * 1000) / 10 : 0,
+        rarityRank: total ? 1 + counts.filter((n) => n > 0 && n < total).length : null,
+        tied: total > 0 && counts.filter((n) => n === total).length > 1 };
     }).sort((a, b) => b.count - a.count),
     axes: Object.fromEntries(axisMeta.map(([key]) => [key, count ? Math.round(rows.reduce((sum, row) => sum + row.axes[key], 0) / count) : null]))
   };

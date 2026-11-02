@@ -373,180 +373,180 @@ const q = (chapter, title, answers) => ({ chapter, title, answers });
 const a = (text, note, roles, factors = {}, axes = {}) => ({ text, note, roles, factors, axes });
 
 export const questionBank = [
-  q("工作群消息", "刚上班就被拉进一个【临时工作群】，消息已经【99+】，还没人告诉你要做什么。你会先：", [
-    a("先【翻聊天记录和文件】，弄明白前因后果再开口。", "群聊考古，先找说明书。", ["SILENTGOD", "SHITMOUNTAIN"], { repair: 2, legacy: 2, boundary: 1 }, { energy: -2, information: -2, decision: 1, structure: 1 }),
-    a("直接问：【要做什么、几点要、谁负责】？问清楚才开工。", "接活可以，盲盒不拆。", ["BOUNDARY", "CHOSEN"], { carry: 2, boundary: 4 }, { energy: 0, information: -1, decision: 2, structure: 2 }),
-    a("先回一句【我在，有需要叫我】，别让群里一直冷场。", "全员已读里终于有个活人。", ["ALIVE", "EMOHEALER"], { repair: 4, carry: 1 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
-    a("把相关的人【叫到一起聊十分钟】，当场把任务分好。", "群还没捂热，会先约上了。", ["MEETINGBOT", "LEADERCARD"], { bossy: 4, repair: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
-    a("先【静音做自己的事】，明确叫到我再看。", "不点名，就当我没刷新。", ["FISH", "CRISPY"], { fish: 4, boundary: 1 }, { energy: -2, information: 0, decision: -1, structure: -2 })
+  q("临时拉群", "周一刚坐下，你被拉进一个【工作群】，消息已经【99+】，没人说你要干什么。你先：", [
+    a("【翻聊天记录】，弄清发生了什么再说话。群聊考古，先找说明书。", "群聊考古，先找说明书。", ["SILENTGOD", "SHITMOUNTAIN"], { repair: 2, legacy: 2, boundary: 1 }, { energy: -2, information: -2, decision: 1, structure: 1 }),
+    a("直接问【要我做什么、几点交】。接活可以，盲盒不拆。", "接活可以，盲盒不拆。", ["BOUNDARY", "CHOSEN"], { carry: 2, boundary: 4 }, { energy: 0, information: -1, decision: 2, structure: 2 }),
+    a("先回一句【“我在”】，让大家知道有人接话。全员已读里终于有个活人。", "全员已读里终于有个活人。", ["ALIVE", "EMOHEALER"], { repair: 4, carry: 1 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
+    a("【拉个十分钟短会】，当场把分工说清。群还没捂热，会先约上了。", "群还没捂热，会先约上了。", ["MEETINGBOT", "LEADERCARD"], { bossy: 4, repair: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
+    a("【先静音】，叫到我再出来。不点名，就当我没刷新。", "不点名，就当我没刷新。", ["FISH", "CRISPY"], { fish: 4, boundary: 1 }, { energy: -2, information: 0, decision: -1, structure: -2 })
   ]),
-  q("任务说不清", "领导让你明天交一份方案，只说【“有点新意”】，没有更多要求。你会先：", [
-    a("问清【给谁看、解决什么问题】，不想做完再猜错。", "拒绝参加领导心思猜猜乐。", ["BOUNDARY", "SILENTGOD"], { boundary: 4, repair: 1 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("先写【三个思路和各自的好处】，让领导选方向。", "先给菜单，再决定炒哪盘菜。", ["PPTGOD", "LEADERCARD"], { bossy: 3, carry: 1 }, { energy: 1, information: 1, decision: 0, structure: 2 }),
-    a("先做一个【能用的小样】，让对方看着实物提意见。", "空聊不如先摆一版。", ["FIREFIGHTER", "CHOSEN"], { carry: 4, repair: 2 }, { energy: 2, information: -1, decision: 1, structure: 0 }),
-    a("找领导以前【夸过的例子】，照他喜欢的风格做。", "领导的喜好也是参考答案。", ["TRAITOR", "TWOFACE"], { bossy: 4, chaos: 2 }, { energy: 1, information: 2, decision: 1, structure: 0 }),
-    a("找一份【旧模板改一改】，先过明天这关。", "模板在手，今晚少愁。", ["AICOWORKER", "FISH"], { fish: 2, repair: 1 }, { energy: -2, information: -2, decision: 1, structure: 1 })
+  q("领导的“大气一点”", "领导让你写一份【活动方案】，明天要，只说了句【“大气一点”】。你会：", [
+    a("【问清预算、人数和想要的效果】，不靠猜。领导语先翻译成人话。", "领导语先翻译成人话。", ["BOUNDARY", "SILENTGOD"], { boundary: 4, repair: 1 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【列三个活动点子】，让领导先挑一个。先给菜单，别让我盲炒。", "先给菜单，别让我盲炒。", ["PPTGOD", "LEADERCARD"], { bossy: 3, carry: 1 }, { energy: 1, information: 1, decision: 0, structure: 2 }),
+    a("【先做一版简单方案】，拿给他看着改。审稿可以，读心不行。", "审稿可以，读心不行。", ["FIREFIGHTER", "CHOSEN"], { carry: 4, repair: 2 }, { energy: 2, information: -1, decision: 1, structure: 0 }),
+    a("【找他以前夸过的方案】，照那个风格写。领导的喜好也是参考答案。", "领导的喜好也是参考答案。", ["TRAITOR", "TWOFACE"], { bossy: 4, chaos: 2 }, { energy: 1, information: 2, decision: 1, structure: 0 }),
+    a("【套一份旧方案】，换内容先交上去。模板续命，今晚不从零开始。", "模板续命，今晚不从零开始。", ["AICOWORKER", "FISH"], { fish: 2, repair: 1 }, { energy: -2, information: -2, decision: 1, structure: 1 })
   ]),
-  q("顺手帮忙", "你自己的事还没做完，同事又请你【“顺手帮个忙”】，估计要花一下午。你会：", [
-    a("【直接拒绝】，请他找别人，我的事也没人替我做。", "顺手不等于接盘。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 2, fish: 1, pot: -1 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
-    a("说我【只能帮十分钟】，超过的部分让他自己来。", "友情有，无限续杯没有。", ["BOUNDARY", "SILENTGOD"], { boundary: 4 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("教他【怎么做、去哪找资料】，让他自己完成。", "送你攻略，副本自己打。", ["EMOHEALER", "BOUNDARY"], { repair: 4, boundary: 2 }, { energy: 1, information: -1, decision: -1, structure: 1 }),
-    a("把两人的事【按轻重缓急排一下】，紧急的那件一起做。", "先排队，别让热心变超载。", ["CHOSEN", "AICOWORKER"], { carry: 2, boundary: 2, repair: 1 }, { energy: 0, information: -2, decision: 1, structure: 2 }),
-    a("先说【等我忙完看看】，暂时不打开他发来的文件。", "这个看看，暂时没有日期。", ["FISH", "CRISPY"], { fish: 4, boundary: 1 }, { energy: -2, information: 0, decision: -1, structure: -2 })
+  q("顺手半天", "同事说【“帮我弄一下，很快的”】，你一看，至少要忙半天，自己的活也没完。你会：", [
+    a("【直接拒绝】，让他另找人。顺手不等于接盘。", "顺手不等于接盘。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 2, fish: 1, pot: -1 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
+    a("【只帮十分钟】，剩下的他自己弄。友情有，无限续杯没有。", "友情有，无限续杯没有。", ["BOUNDARY", "SILENTGOD"], { boundary: 4 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【教他怎么做】，但不替他做完。送你攻略，副本自己打。", "送你攻略，副本自己打。", ["EMOHEALER", "BOUNDARY"], { repair: 4, boundary: 2 }, { energy: 1, information: -1, decision: -1, structure: 1 }),
+    a("【一起排个先后】，急的那件先做。先排队，别让热心变超载。", "先排队，别让热心变超载。", ["CHOSEN", "AICOWORKER"], { carry: 2, boundary: 2, repair: 1 }, { energy: 0, information: -2, decision: 1, structure: 2 }),
+    a("【先说等会儿】，暂时不接这个活。等会儿是多久？我也还没定。", "等会儿是多久？我也还没定。", ["FISH", "CRISPY"], { fish: 4, boundary: 1 }, { energy: -2, information: 0, decision: -1, structure: -2 })
   ]),
-  q("休息被看见", "忙完一阵，你正【歇几分钟】，领导从旁边走过。你最可能：", [
-    a("立刻【切回工作画面】，休息可以，被看到不行。", "切屏速度就是求生欲。", ["FISH", "AICOWORKER"], { fish: 4, repair: 1 }, { energy: -2, information: -1, decision: 1, structure: 1 }),
-    a("继续【检查刚做完的工作】，顺手把遗漏补上。", "休息键没按稳，又上班了。", ["CHOSEN", "SILENTGOD"], { carry: 2, repair: 2 }, { energy: -1, information: -2, decision: 1, structure: 2 }),
-    a("顺势【问一个等他决定的问题】，刚好省得去找他。", "领导路过，待办递上。", ["LEADERCARD", "PPTGOD"], { bossy: 3, carry: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
-    a("【照常休息】，该做的做完了，没必要演忙。", "工作做完，休息有理。", ["BOUNDARY", "FISH"], { fish: 2, boundary: 4 }, { energy: -1, information: 0, decision: 2, structure: 1 }),
-    a("明明没耽误事，还是【紧张得坐直】，等他走了才放松。", "人没犯错，心先罚站。", ["CRISPY", "EMOHEALER"], { fish: 3, repair: 2 }, { energy: -1, information: 0, decision: -2, structure: -1 })
+  q("休息被撞见", "刚忙完，你歇着刷了会儿手机，【领导突然从旁边走过】。你会：", [
+    a("【秒切工作画面】，装作一直很忙。切屏速度就是求生欲。", "切屏速度就是求生欲。", ["FISH", "AICOWORKER"], { fish: 4, repair: 1 }, { energy: -2, information: -1, decision: 1, structure: 1 }),
+    a("【检查刚做完的东西】，顺手再找找遗漏。休息键没按稳，又上班了。", "休息键没按稳，又上班了。", ["CHOSEN", "SILENTGOD"], { carry: 2, repair: 2 }, { energy: -1, information: -2, decision: 1, structure: 2 }),
+    a("【主动叫住领导】，问一件等他决定的事。领导路过，待办递上。", "领导路过，待办递上。", ["LEADERCARD", "PPTGOD"], { bossy: 3, carry: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
+    a("【继续休息】，做完了就没必要演。工作做完，休息有理。", "工作做完，休息有理。", ["BOUNDARY", "FISH"], { fish: 2, boundary: 4 }, { energy: -1, information: 0, decision: 2, structure: 1 }),
+    a("【赶紧放下手机】，明明没耽误事还是紧张。人没犯错，心先罚站。", "人没犯错，心先罚站。", ["CRISPY", "EMOHEALER"], { fish: 3, repair: 2 }, { energy: -1, information: 0, decision: -2, structure: -1 })
   ]),
-  q("交付出错", "今天要交的东西【出了差错】，客户催、领导问。你最可能先：", [
-    a("【检查哪里错了】，确认影响多大，再决定怎么改。", "先查现场，别靠嗓门破案。", ["SILENTGOD", "SHITMOUNTAIN"], { repair: 3, legacy: 4 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("先找【能顶上的替代办法】，让对方今天有东西可用。", "先救今天，明天再复盘。", ["FIREFIGHTER", "CHOSEN"], { carry: 4, repair: 4 }, { energy: 2, information: -1, decision: 1, structure: 0 }),
-    a("先【解释情况和处理时间】，别让对方一直干等。", "东西出了错，消息别失踪。", ["EMOHEALER", "ALIVE"], { repair: 4, pot: 1 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
-    a("先说明【不是我负责的部分】，请原负责人来处理。", "先分清锅，再决定谁开火。", ["SHIFTER", "TWOFACE"], { boundary: 3, chaos: 3, bossy: 1, pot: -1 }, { energy: 1, information: 0, decision: 2, structure: 0 }),
-    a("先查【以前有没有同样的问题】，看看旧办法还能不能用。", "熟悉的坑，熟悉的配方。", ["SHITMOUNTAIN", "STIRRER"], { legacy: 4, chaos: 3 }, { energy: 0, information: 2, decision: 1, structure: -1 })
+  q("交付翻车", "你们今天要交给客户的东西【出了错】，客户催、领导问，你也在群里。你先：", [
+    a("【检查错在哪里】，确认哪些地方受影响。先查现场，别靠嗓门破案。", "先查现场，别靠嗓门破案。", ["SILENTGOD", "SHITMOUNTAIN"], { repair: 3, legacy: 4 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【找个替代办法先顶上】，让客户今天能用。先救今天，明天再复盘。", "先救今天，明天再复盘。", ["FIREFIGHTER", "CHOSEN"], { carry: 4, repair: 4 }, { energy: 2, information: -1, decision: 1, structure: 0 }),
+    a("【解释情况和处理时间】，先给客户一个回应。东西出了错，消息别失踪。", "东西出了错，消息别失踪。", ["EMOHEALER", "ALIVE"], { repair: 4, pot: 1 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
+    a("【叫原负责人处理】，先说明哪些不归我管。先分清锅，再决定谁开火。", "先分清锅，再决定谁开火。", ["SHIFTER", "TWOFACE"], { boundary: 3, chaos: 3, bossy: 1, pot: -1 }, { energy: 1, information: 0, decision: 2, structure: 0 }),
+    a("【翻以前的处理记录】，看有没有现成办法。熟悉的坑，熟悉的配方。", "熟悉的坑，熟悉的配方。", ["SHITMOUNTAIN", "STIRRER"], { legacy: 4, chaos: 3 }, { energy: 0, information: 2, decision: 1, structure: -1 })
   ]),
-  q("开会没结论", "一件事讨论了【40 分钟还没结论】，眼看又要超时。你会：", [
-    a("把分歧列出来，请大家【现在定下一步和负责人】。", "今天这个会总得有个下班点。", ["CHOSEN", "PPTGOD"], { carry: 3, repair: 2 }, { energy: 1, information: -1, decision: 2, structure: 2 }),
-    a("觉得人没到齐，提议【再约一次会】把问题说透。", "此会未完，下会待续。", ["MEETINGBOT", "LEADERCARD"], { bossy: 4 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
-    a("不抢话，先【记好问题和各方意见】，会后发给大家。", "嘴没上线，笔记已交付。", ["SILENTGOD", "AICOWORKER"], { repair: 2, boundary: 2 }, { energy: -2, information: -2, decision: 1, structure: 2 }),
-    a("【边听边做别的事】，提到自己再回答。", "身体参会，手上另有安排。", ["FISH", "CRISPY"], { fish: 4 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
-    a("直接问【“这件事一定要做吗？”】，先挑战一下前提。", "大家在修车，你问为什么开车。", ["STIRRER", "TWOFACE"], { chaos: 4 }, { energy: 2, information: 2, decision: -1, structure: -2 })
+  q("会生会", "会开了【40 分钟还没结论】，大家又把刚才的话说了一遍。你会：", [
+    a("【总结分歧，让负责人拍板】，今天必须定下一步。今天这个会总得有个下班点。", "今天这个会总得有个下班点。", ["CHOSEN", "PPTGOD"], { carry: 3, repair: 2 }, { energy: 1, information: -1, decision: 2, structure: 2 }),
+    a("【再约一场会】，这次把该来的人叫齐。此会未完，下会待续。", "此会未完，下会待续。", ["MEETINGBOT", "LEADERCARD"], { bossy: 4 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
+    a("【默默记下要点】，会后发给大家。嘴没上线，笔记已交付。", "嘴没上线，笔记已交付。", ["SILENTGOD", "AICOWORKER"], { repair: 2, boundary: 2 }, { energy: -2, information: -2, decision: 1, structure: 2 }),
+    a("【边听边干别的】，提到自己再开麦。身体参会，手上另有安排。", "身体参会，手上另有安排。", ["FISH", "CRISPY"], { fish: 4 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
+    a("【反问这事还要不要做】，先拆掉讨论的前提。大家在修车，你问为什么开车。", "大家在修车，你问为什么开车。", ["STIRRER", "TWOFACE"], { chaos: 4 }, { energy: 2, information: 2, decision: -1, structure: -2 })
   ]),
-  q("临时加要求", "事情已经改了三遍，对方又说【“再加一点”】，但【交付时间不变】。你会：", [
-    a("说明【加内容就要延期或减别的】，这次先谈条件。", "可以加单，不能白加班。", ["BOUNDARY", "SILENTGOD"], { boundary: 4, repair: 1 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("先把【原定的部分交好】，新增的后面再处理。", "先保饭碗里的，别再往锅里倒。", ["FIREFIGHTER", "COWHORSE"], { carry: 4, pot: 1 }, { energy: 1, information: -1, decision: 1, structure: 1 }),
-    a("听着来了灵感，忍不住【再提几个新点子】。", "愿望清单正在自我繁殖。", ["WISHPOOL", "PPTGOD"], { chaos: 4, bossy: 2 }, { energy: 2, information: 2, decision: -1, structure: -2 }),
-    a("向领导建议【分两次交付】，把新增部分单独安排。", "给新增找个名分和日期。", ["TRAITOR", "LEADERCARD"], { bossy: 4, chaos: 2 }, { energy: 2, information: 1, decision: 1, structure: 1 }),
-    a("【先答应再想办法】，不好意思当场让对方失望。", "嘴说没问题，心说大问题。", ["CRISPY", "POTMAN"], { fish: 2, pot: 3 }, { energy: -2, information: 0, decision: -1, structure: -1 })
+  q("再加一点点", "已经改了三遍，对方又说【“顺便再加一点”】，但【交的时间不能晚】。你会：", [
+    a("【要求延期或删掉别的内容】，条件先谈好。可以加单，不能白加班。", "可以加单，不能白加班。", ["BOUNDARY", "SILENTGOD"], { boundary: 4, repair: 1 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【先交原来说好的部分】，新增后面再做。先保饭碗里的，别再往锅里倒。", "先保饭碗里的，别再往锅里倒。", ["FIREFIGHTER", "COWHORSE"], { carry: 4, pot: 1 }, { energy: 1, information: -1, decision: 1, structure: 1 }),
+    a("【顺势再提几个点子】，越聊想做的越多。愿望清单正在自我繁殖。", "愿望清单正在自我繁殖。", ["WISHPOOL", "PPTGOD"], { chaos: 4, bossy: 2 }, { energy: 2, information: 2, decision: -1, structure: -2 }),
+    a("【建议分两次交】，给新增内容另定时间。给新增找个名分和日期。", "给新增找个名分和日期。", ["TRAITOR", "LEADERCARD"], { bossy: 4, chaos: 2 }, { energy: 2, information: 1, decision: 1, structure: 1 }),
+    a("【先答应下来】，困难回去自己消化。嘴说没问题，心说大问题。", "嘴说没问题，心说大问题。", ["CRISPY", "POTMAN"], { fish: 2, pot: 3 }, { energy: -2, information: 0, decision: -1, structure: -1 })
   ]),
-  q("前任交接", "你接手前同事的工作，文件里有【四个“最终版”】，也没留下清楚说明。你会：", [
-    a("逐一核对，整理出【最新版和注意事项】再接着做。", "屎山继承人，先清点遗产。", ["SHITMOUNTAIN", "SILENTGOD"], { legacy: 4, repair: 3, boundary: 1 }, { energy: -2, information: -2, decision: 2, structure: 2 }),
-    a("只先解决【今天必须用的部分】，其他慢慢补。", "先修能走的路，别急着修全城。", ["FIREFIGHTER", "POTMAN"], { carry: 3, pot: 3, repair: 2 }, { energy: 1, information: -1, decision: 1, structure: 0 }),
-    a("列出缺了什么，找领导【申请人手或整理时间】。", "历史遗留，也得有人给预算。", ["PPTGOD", "LEADERCARD"], { bossy: 3, legacy: 3 }, { energy: 1, information: 1, decision: 1, structure: 2 }),
-    a("把混乱的地方【发到群里吐槽】，让大家知道这活有多坑。", "前任留下文件，我留下考古文学。", ["STIRRER", "SHITMOUNTAIN"], { chaos: 4, legacy: 3 }, { energy: 2, information: 2, decision: -1, structure: -2 }),
-    a("先【找前同事问清楚】，能问本人就不自己猜。", "说明书没有，试试联系原作者。", ["AICOWORKER", "FISH"], { fish: 2, legacy: 2, repair: 1 }, { energy: -2, information: -2, decision: 1, structure: 1 })
+  q("接班还是接盘", "前同事离职，你来接他的活。文件夹里全是【“最终版”“最终版2”“真最终版”】，没人知道【该用哪个】。你会：", [
+    a("【逐个核对内容】，整理出一份能用的版本。屎山继承人，先清点遗产。", "屎山继承人，先清点遗产。", ["SHITMOUNTAIN", "SILENTGOD"], { legacy: 4, repair: 3, boundary: 1 }, { energy: -2, information: -2, decision: 2, structure: 2 }),
+    a("【先找今天要用的】，其他暂时不动。今天先活着，考古明天继续。", "今天先活着，考古明天继续。", ["FIREFIGHTER", "POTMAN"], { carry: 3, pot: 3, repair: 2 }, { energy: 1, information: -1, decision: 1, structure: 0 }),
+    a("【找领导要时间或人手】，说明整理也算工作。历史遗留，不能全靠我遗传。", "历史遗留，不能全靠我遗传。", ["PPTGOD", "LEADERCARD"], { bossy: 3, legacy: 3 }, { energy: 1, information: 1, decision: 1, structure: 2 }),
+    a("【把乱文件发群里吐槽】，先让大家见识一下。考古文学，素材自己送上门。", "考古文学，素材自己送上门。", ["STIRRER", "SHITMOUNTAIN"], { chaos: 4, legacy: 3 }, { energy: 2, information: 2, decision: -1, structure: -2 }),
+    a("【联系前同事问清楚】，本人比猜测靠谱。文件没说明书，试着联系原作者。", "文件没说明书，试着联系原作者。", ["AICOWORKER", "FISH"], { fish: 2, legacy: 2, repair: 1 }, { energy: -2, information: -2, decision: 1, structure: 1 })
   ]),
-  q("新人提问", "新人一天来问了你好几次，你自己的工作已经【被打断多次】。你会：", [
-    a("整理一份【常见问题清单】，一次说明白。", "今天多写一页，明天少答十遍。", ["CHOSEN", "SILENTGOD"], { carry: 2, repair: 3 }, { energy: 0, information: -2, decision: 1, structure: 2 }),
-    a("还是【逐个耐心讲】，他刚来，怕问错也正常。", "新人保护期，耐心续费中。", ["EMOHEALER", "CRISPY"], { repair: 4 }, { energy: 1, information: 0, decision: -2, structure: 0 }),
-    a("给他示例，让他【先试一次，卡住再问】。", "可以带路，不全程代走。", ["BOUNDARY", "AICOWORKER"], { boundary: 3, repair: 2 }, { energy: 0, information: -1, decision: 2, structure: 1 }),
-    a("约个【固定答疑时间】，把大家的问题一起讲。", "问题集中开会，工作集中续命。", ["MEETINGBOT", "ALIVE"], { bossy: 2, repair: 2 }, { energy: 2, information: 0, decision: -1, structure: 2 }),
-    a("告诉他【我现在没空】，请他先问其他同事。", "热心有额度，今天已用完。", ["TWOFACE", "FISH"], { fish: 3, chaos: 2 }, { energy: 0, information: 1, decision: -1, structure: -1 })
+  q("新人十万个为什么", "新人一天问了你好几次，你自己的工作【被打断得七零八落】。你会：", [
+    a("【写个常见问题清单】，下次直接发给他。今天多写一页，明天少答十遍。", "今天多写一页，明天少答十遍。", ["CHOSEN", "SILENTGOD"], { carry: 2, repair: 3 }, { energy: 0, information: -2, decision: 1, structure: 2 }),
+    a("【继续一个个讲】，刚来不懂很正常。新人保护期，耐心续费中。", "新人保护期，耐心续费中。", ["EMOHEALER", "CRISPY"], { repair: 4 }, { energy: 1, information: 0, decision: -2, structure: 0 }),
+    a("【给他个例子自己试】，卡住再来问。可以带路，不全程代走。", "可以带路，不全程代走。", ["BOUNDARY", "AICOWORKER"], { boundary: 3, repair: 2 }, { energy: 0, information: -1, decision: 2, structure: 1 }),
+    a("【定个集中答疑时间】，把问题攒着一起讲。问题集中开会，工作集中续命。", "问题集中开会，工作集中续命。", ["MEETINGBOT", "ALIVE"], { bossy: 2, repair: 2 }, { energy: 2, information: 0, decision: -1, structure: 2 }),
+    a("【说自己现在没空】，让他先问别人。热心有额度，今天已用完。", "热心有额度，今天已用完。", ["TWOFACE", "FISH"], { fish: 3, chaos: 2 }, { energy: 0, information: 1, decision: -1, structure: -1 })
   ]),
-  q("自愿团建", "群里通知【周五下班后聚餐】，写着【“自愿参加”】。你真实的做法是：", [
-    a("【不参加】，晚上有自己的安排，不另找理由。", "自愿这两个字，我先当真了。", ["BOUNDARY", "CRISPY"], { boundary: 4, fish: 3 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
-    a("【主动报名】，还能和同事聊点工作以外的事。", "终于有个不用看表格的群活动。", ["ALIVE", "EMOHEALER"], { repair: 3, carry: 1 }, { energy: 2, information: 0, decision: -2, structure: 1 }),
-    a("其实不想去，但【大家都去我也去】，省得显得不合群。", "人在饭桌，心在被窝。", ["COWHORSE", "POTMAN"], { carry: 2, pot: 2 }, { energy: 0, information: -1, decision: -1, structure: 0 }),
-    a("去，而且会【帮忙订位、安排时间】，免得现场乱。", "连吃顿饭都自带负责人气质。", ["MEETINGBOT", "LEADERCARD"], { bossy: 3, repair: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
-    a("先看【领导和熟人去不去】，再决定怎么回复。", "聚餐报名，先做人员调研。", ["TWOFACE", "TRAITOR"], { chaos: 2, bossy: 2 }, { energy: 1, information: 1, decision: 0, structure: -1 })
+  q("自愿团建", "公司通知【周五下班后聚餐】，还特意写了【“自愿参加”】。你会：", [
+    a("【直接不去】，下班后有自己的安排。自愿这两个字，我先当真了。", "自愿这两个字，我先当真了。", ["BOUNDARY", "CRISPY"], { boundary: 4, fish: 3 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
+    a("【主动报名】，和同事吃顿饭也挺好。终于有个不用看表格的群活动。", "终于有个不用看表格的群活动。", ["ALIVE", "EMOHEALER"], { repair: 3, carry: 1 }, { energy: 2, information: 0, decision: -2, structure: 1 }),
+    a("【大家去我就去】，不想显得不合群。人在饭桌，心在被窝。", "人在饭桌，心在被窝。", ["COWHORSE", "POTMAN"], { carry: 2, pot: 2 }, { energy: 0, information: -1, decision: -1, structure: 0 }),
+    a("【帮忙订位和安排】，去就把事情张罗好。连吃顿饭都自带负责人气质。", "连吃顿饭都自带负责人气质。", ["MEETINGBOT", "LEADERCARD"], { bossy: 3, repair: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 }),
+    a("【先看领导和熟人去不去】，再决定怎么回。聚餐报名，先做人员调研。", "聚餐报名，先做人员调研。", ["TWOFACE", "TRAITOR"], { chaos: 2, bossy: 2 }, { energy: 1, information: 1, decision: 0, structure: -1 })
   ]),
-  q("功劳没被提", "工作汇报时，你花了很多时间做的部分【没提到你的贡献】。你会：", [
-    a("当场补一句【我负责了哪些部分】，客气但说清楚。", "活不能白干，名字不能蒸发。", ["BOUNDARY", "SILENTGOD"], { boundary: 3, repair: 2 }, { energy: 0, information: -2, decision: 2, structure: 2 }),
-    a("【先不说】，事情做成就行，不想现场争。", "嘴上算了，心里记着。", ["COWHORSE", "POTMAN"], { carry: 2, pot: 4 }, { energy: -1, information: -1, decision: -1, structure: 0 }),
-    a("会后【私下找负责人谈】，下次要把贡献讲清楚。", "不抢话筒，单独把账对上。", ["SHIFTER", "TWOFACE"], { boundary: 2, chaos: 2, bossy: 1, pot: -1 }, { energy: 1, information: -1, decision: 2, structure: 1 }),
-    a("下次提前把贡献【写进汇报材料】，让事实自己出现。", "让我的名字住进材料里。", ["PPTGOD", "LEADERCARD"], { bossy: 3, carry: 2 }, { energy: 1, information: 1, decision: 1, structure: 2 }),
-    a("半开玩笑地说【“我的名字是被折叠了吗？”】，提醒一下。", "笑着开麦，功劳归位。", ["ALIVE", "STIRRER"], { chaos: 2, repair: 2 }, { energy: 2, information: 1, decision: -1, structure: -1 })
+  q("我的名字呢", "汇报时，你忙了好几天做的部分被带过了，【没提到你】。你会：", [
+    a("【当场补充自己的贡献】，客气地说清楚。活不能白干，名字不能蒸发。", "活不能白干，名字不能蒸发。", ["BOUNDARY", "SILENTGOD"], { boundary: 3, repair: 2 }, { energy: 0, information: -2, decision: 2, structure: 2 }),
+    a("【先不说】，不想为了功劳当场争。嘴上算了，心里记着。", "嘴上算了，心里记着。", ["COWHORSE", "POTMAN"], { carry: 2, pot: 4 }, { energy: -1, information: -1, decision: -1, structure: 0 }),
+    a("【会后找负责人单聊】，下次别漏了我。不抢话筒，单独把账对上。", "不抢话筒，单独把账对上。", ["SHIFTER", "TWOFACE"], { boundary: 2, chaos: 2, bossy: 1, pot: -1 }, { energy: 1, information: -1, decision: 2, structure: 1 }),
+    a("【下次提前写进汇报材料】，省得临场抢话。让我的名字住进材料里。", "让我的名字住进材料里。", ["PPTGOD", "LEADERCARD"], { bossy: 3, carry: 2 }, { energy: 1, information: 1, decision: 1, structure: 2 }),
+    a("【半开玩笑提醒一句】：“我的名字被折叠了？”笑着开麦，功劳归位。", "笑着开麦，功劳归位。", ["ALIVE", "STIRRER"], { chaos: 2, repair: 2 }, { energy: 2, information: 1, decision: -1, structure: -1 })
   ]),
-  q("下午犯困", "下午你明显【犯困、效率下降】，手头还有一些事没做完。你会：", [
-    a("偷偷【刷一会儿手机】，缓过来再干。", "工位省电模式已开启。", ["FISH", "CRISPY"], { fish: 4 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
-    a("【休息十分钟并设提醒】，再做最重要的事。", "休息有闹钟，摸鱼有归期。", ["BOUNDARY", "CHOSEN"], { fish: 2, boundary: 2, carry: 1 }, { energy: -1, information: -1, decision: 1, structure: 2 }),
-    a("找同事【聊两句或走一圈】，有人说话就精神点。", "电量不足，补点人味。", ["ALIVE", "EMOHEALER"], { repair: 2, fish: 1 }, { energy: 2, information: 0, decision: -2, structure: -1 }),
-    a("【继续硬撑着做】，做完才安心。", "电量红了，工作灯还亮着。", ["COWHORSE", "FIREFIGHTER"], { carry: 4, pot: 1 }, { energy: 0, information: -1, decision: 1, structure: 1 }),
-    a("先做【不用太动脑的重复活】，复杂的晚点再说。", "大脑歇班，流程继续上班。", ["AICOWORKER", "SILENTGOD"], { fish: 2, repair: 2 }, { energy: -2, information: -1, decision: 1, structure: 2 })
+  q("下午三点已关机", "下午三点，你【困得看字都重影】，手头还有活。你会：", [
+    a("【偷偷刷会儿手机】，缓过来再干。工位省电模式已开启。", "工位省电模式已开启。", ["FISH", "CRISPY"], { fish: 4 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
+    a("【休息十分钟再回来】，设个闹钟防失踪。休息有闹钟，摸鱼有归期。", "休息有闹钟，摸鱼有归期。", ["BOUNDARY", "CHOSEN"], { fish: 2, boundary: 2, carry: 1 }, { energy: -1, information: -1, decision: 1, structure: 2 }),
+    a("【找同事聊两句】，靠聊天给自己充电。电量不足，补点人味。", "电量不足，补点人味。", ["ALIVE", "EMOHEALER"], { repair: 2, fish: 1 }, { energy: 2, information: 0, decision: -2, structure: -1 }),
+    a("【继续硬做】，干不完心里不踏实。电量红了，工作灯还亮着。", "电量红了，工作灯还亮着。", ["COWHORSE", "FIREFIGHTER"], { carry: 4, pot: 1 }, { energy: 0, information: -1, decision: 1, structure: 1 }),
+    a("【先做不用动脑的重复活】，难的晚点再说。大脑歇班，流程继续上班。", "大脑歇班，流程继续上班。", ["AICOWORKER", "SILENTGOD"], { fish: 2, repair: 2 }, { energy: -2, information: -1, decision: 1, structure: 2 })
   ]),
-  q("下班后消息", "晚上八点，领导发来【“在吗，帮忙看一下”】，没说是不是急事。你会：", [
-    a("【明天上班再回】，非工作时间先过自己的生活。", "下班了，客服不在线。", ["BOUNDARY", "SILENTGOD"], { boundary: 4, fish: 1 }, { energy: -2, information: -1, decision: 2, structure: 2 }),
-    a("先问【是不是今天非处理不可】，真紧急再做。", "紧急通道有，随叫随到没有。", ["FIREFIGHTER", "CHOSEN"], { carry: 3, boundary: 2 }, { energy: 1, information: -1, decision: 1, structure: 1 }),
-    a("【马上打开处理】，早点做完就不用一直惦记。", "手机一响，工牌自动戴上。", ["AICOWORKER", "CRISPY"], { fish: 2, boundary: 2 }, { energy: -1, information: -1, decision: 1, structure: 2 }),
-    a("先回【“收到，马上看”】，给领导留下积极印象。", "人还在沙发，态度已到公司。", ["MEETINGBOT", "TRAITOR"], { bossy: 4, carry: 1 }, { energy: 2, information: 1, decision: 1, structure: 2 }),
-    a("先【放着不看】，等自己缓过来再决定。", "这条消息需要一点心理准备。", ["CRISPY", "FISH"], { fish: 4, boundary: 2 }, { energy: -2, information: 0, decision: -1, structure: -2 })
+  q("在吗的含金量", "晚上八点，领导发来【“在吗，简单看一下”】，没说是不是急事。你会：", [
+    a("【明天上班再回】，私人时间先留给自己。下班了，客服不在线。", "下班了，客服不在线。", ["BOUNDARY", "SILENTGOD"], { boundary: 4, fish: 1 }, { energy: -2, information: -1, decision: 2, structure: 2 }),
+    a("【先问急不急】，真急再处理。紧急通道有，随叫随到没有。", "紧急通道有，随叫随到没有。", ["FIREFIGHTER", "CHOSEN"], { carry: 3, boundary: 2 }, { energy: 1, information: -1, decision: 1, structure: 1 }),
+    a("【马上打开做】，做完才能安心休息。手机一响，工牌自动戴上。", "手机一响，工牌自动戴上。", ["AICOWORKER", "CRISPY"], { fish: 2, boundary: 2 }, { energy: -1, information: -1, decision: 1, structure: 2 }),
+    a("【先回收到马上看】，态度必须先到位。人还在沙发，态度已到公司。", "人还在沙发，态度已到公司。", ["MEETINGBOT", "TRAITOR"], { bossy: 4, carry: 1 }, { energy: 2, information: 1, decision: 1, structure: 2 }),
+    a("【暂时不看】，等自己想回的时候再说。这条消息需要一点心理准备。", "这条消息需要一点心理准备。", ["CRISPY", "FISH"], { fish: 4, boundary: 2 }, { energy: -2, information: 0, decision: -1, structure: -2 })
   ]),
-  q("群里争执", "两个同事在工作群里【互相指责】，你也参与了这件事。你会：", [
-    a("把已知事实发出来，建议【先解决眼前问题】。", "先干正事，吵架暂停。", ["CHOSEN", "FIREFIGHTER"], { carry: 3, repair: 3 }, { energy: 1, information: -1, decision: 2, structure: 2 }),
-    a("先【私下劝一劝双方】，别把关系吵坏。", "群里冒火，私聊降温。", ["EMOHEALER", "ALIVE"], { repair: 4 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
-    a("先【不表态】，等情况更清楚再说。", "证据没到齐，麦克风先关着。", ["SILENTGOD", "TWOFACE"], { boundary: 2, repair: 1 }, { energy: -2, information: -1, decision: 1, structure: 1 }),
-    a("忍不住【补一句尖锐的话】，谁的问题就说谁。", "气氛已经到这儿了，再添一句。", ["STIRRER", "TWOFACE"], { chaos: 4 }, { energy: 2, information: 2, decision: -1, structure: -2 }),
-    a("直接提议【请负责人定办法】，大家按决定办。", "请能拍板的人结束这集。", ["LEADERCARD", "TRAITOR"], { bossy: 4, repair: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 })
+  q("群聊变辩论赛", "工作出了问题，两个同事在群里【互相指责】，你也参与过这件事。你会：", [
+    a("【把事实说清楚】，先定眼前怎么解决。先干正事，吵架暂停。", "先干正事，吵架暂停。", ["CHOSEN", "FIREFIGHTER"], { carry: 3, repair: 3 }, { energy: 1, information: -1, decision: 2, structure: 2 }),
+    a("【分别私聊劝一下】，别把关系吵坏。群里冒火，私聊降温。", "群里冒火，私聊降温。", ["EMOHEALER", "ALIVE"], { repair: 4 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
+    a("【先不表态】，等事情更清楚再说。证据没到齐，麦克风先关着。", "证据没到齐，麦克风先关着。", ["SILENTGOD", "TWOFACE"], { boundary: 2, repair: 1 }, { energy: -2, information: -1, decision: 1, structure: 1 }),
+    a("【直接指出谁有问题】，忍不住就要说。气氛已经到这儿了，再添一句。", "气氛已经到这儿了，再添一句。", ["STIRRER", "TWOFACE"], { chaos: 4 }, { energy: 2, information: 2, decision: -1, structure: -2 }),
+    a("【请负责人定办法】，别让大家吵到下班。请能拍板的人结束这集。", "请能拍板的人结束这集。", ["LEADERCARD", "TRAITOR"], { bossy: 4, repair: 1 }, { energy: 2, information: 0, decision: 1, structure: 2 })
   ]),
-  q("别人改了安排", "另一组临时改了安排，导致你这边【做好的工作要重来】，双方都说没收到通知。你会：", [
-    a("先【核对旧约定和新要求】，找出到底改了什么。", "先查版本，别先查情绪。", ["SILENTGOD", "SHITMOUNTAIN"], { legacy: 3, repair: 2 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("先【补救眼前的交付】，别让两组一起耽误。", "谁改的以后说，今天先救。", ["FIREFIGHTER", "POTMAN"], { carry: 3, pot: 3 }, { energy: 1, information: -1, decision: 1, structure: 1 }),
-    a("把变更记录发回去，请【改安排的人承担返工】。", "谁点的加餐，谁认这笔账。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 3, pot: -1 }, { energy: 0, information: -2, decision: 2, structure: 1 }),
-    a("先【等两边吵出结论】，我不急着进场。", "双方还在辩论，我先退出会场。", ["STIRRER", "FISH"], { chaos: 3, fish: 2 }, { energy: 1, information: 1, decision: -1, structure: -2 }),
-    a("提出【换一种合作办法】，顺便把老问题一起改掉。", "来都来了，不如重新设计。", ["WISHPOOL", "PPTGOD"], { chaos: 3, bossy: 2 }, { energy: 2, information: 2, decision: -1, structure: -1 })
+  q("你改我重做", "另一组改了安排，害你【做好的东西全部重来】，他们还说【“以为你知道”】。你会：", [
+    a("【核对新旧要求】，先弄清到底改了哪里。先查版本，别先查情绪。", "先查版本，别先查情绪。", ["SILENTGOD", "SHITMOUNTAIN"], { legacy: 3, repair: 2 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【先帮忙补救】，不能让眼前的事也耽误。谁改的以后说，今天先救。", "谁改的以后说，今天先救。", ["FIREFIGHTER", "POTMAN"], { carry: 3, pot: 3 }, { energy: 1, information: -1, decision: 1, structure: 1 }),
+    a("【让改安排的人处理返工】，别默认我来兜底。谁点的加餐，谁认这笔账。", "谁点的加餐，谁认这笔账。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 3, pot: -1 }, { energy: 0, information: -2, decision: 2, structure: 1 }),
+    a("【先等两边争出结论】，我不急着动手。双方还在辩论，我先退出会场。", "双方还在辩论，我先退出会场。", ["STIRRER", "FISH"], { chaos: 3, fish: 2 }, { energy: 1, information: 1, decision: -1, structure: -2 }),
+    a("【提个新的合作办法】，趁机把老毛病也改了。来都来了，不如重新设计。", "来都来了，不如重新设计。", ["WISHPOOL", "PPTGOD"], { chaos: 3, bossy: 2 }, { energy: 2, information: 2, decision: -1, structure: -1 })
   ]),
-  q("不能立刻回答", "客户或合作方追问一个【你暂时不确定的问题】，坚持要你现在给答复。你会：", [
-    a("明确说【还需核实，几点前回复】，不编一个答案。", "暂时不知道，也是一种诚实交付。", ["AICOWORKER", "SILENTGOD"], { repair: 2, boundary: 2 }, { energy: -1, information: -2, decision: 1, structure: 2 }),
-    a("先问【他具体需要决定什么】，避免答非所问。", "先问需求，别急着考试。", ["BOUNDARY", "CHOSEN"], { boundary: 3, carry: 1 }, { energy: 0, information: -1, decision: 2, structure: 2 }),
-    a("先【安抚对方的着急】，让他知道有人跟进。", "答案还在路上，态度先到。", ["EMOHEALER", "ALIVE"], { repair: 4 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
-    a("请【有权限的领导回复】，我不替别人做承诺。", "这题超纲，请有签字权的人答。", ["TRAITOR", "LEADERCARD"], { bossy: 4, chaos: 1 }, { energy: 2, information: 1, decision: 1, structure: 1 }),
-    a("给一个【可先执行的临时办法】，同时说明限制。", "最终答案没到，临时办法先顶上。", ["CHOSEN", "FIREFIGHTER"], { carry: 3, repair: 2 }, { energy: 1, information: -1, decision: 1, structure: 1 })
+  q("现在就要答案", "客户问了一个【你还不能确定的问题】，催你【“现在就给个准话”】。你会：", [
+    a("【说清还要核实，几点回复】，不随便保证。暂时不知道，也是一种诚实交付。", "暂时不知道，也是一种诚实交付。", ["AICOWORKER", "SILENTGOD"], { repair: 2, boundary: 2 }, { energy: -1, information: -2, decision: 1, structure: 2 }),
+    a("【先问他急着解决什么】，找到真正的问题。先问需求，别急着考试。", "先问需求，别急着考试。", ["BOUNDARY", "CHOSEN"], { boundary: 3, carry: 1 }, { energy: 0, information: -1, decision: 2, structure: 2 }),
+    a("【先安抚他】，让他知道这件事有人管。答案还在路上，态度先到。", "答案还在路上，态度先到。", ["EMOHEALER", "ALIVE"], { repair: 4 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
+    a("【请领导来决定】，不替别人做承诺。这题超纲，请有签字权的人答。", "这题超纲，请有签字权的人答。", ["TRAITOR", "LEADERCARD"], { bossy: 4, chaos: 1 }, { energy: 2, information: 1, decision: 1, structure: 1 }),
+    a("【给个临时可行的办法】，先让事情继续走。最终答案没到，临时办法先顶上。", "最终答案没到，临时办法先顶上。", ["CHOSEN", "FIREFIGHTER"], { carry: 3, repair: 2 }, { energy: 1, information: -1, decision: 1, structure: 1 })
   ]),
-  q("忙了没回报", "最近经常多做事，却没有额外回报，领导还说【“年轻人多锻炼”】。你更可能：", [
-    a("当场反问【“那回报什么时候安排？”】，不想再听空话。", "锻炼肌肉行，锻炼工资也行吧。", ["STIRRER", "TWOFACE"], { chaos: 4 }, { energy: 2, information: 1, decision: -1, structure: -1 }),
-    a("先找信任的同事【聊聊是不是大家都这样】，缓解心里不平衡。", "先找个懂的人，一起把气喘匀。", ["EMOHEALER", "ALIVE"], { repair: 3 }, { energy: 1, information: 0, decision: -2, structure: 0 }),
-    a("提出【工作量和回报一起谈】，条件不变就不再额外接。", "成长可以，长期白送不行。", ["BOUNDARY", "COWHORSE"], { boundary: 4 }, { energy: 0, information: -1, decision: 2, structure: 2 }),
-    a("把多做的事整理成成果，【争取升职或更多资源】。", "既然做了，就得拿去谈条件。", ["LEADERCARD", "TRAITOR"], { bossy: 4 }, { energy: 2, information: 1, decision: 1, structure: 1 }),
-    a("不再争论，之后【只做约定范围内的工作】。", "期待下调，职责照办。", ["SILENTGOD", "AICOWORKER"], { boundary: 2, repair: 1 }, { energy: -2, information: -1, decision: 2, structure: 2 })
+  q("多干点是福报", "最近总让你多干活，钱没多一分，领导还说【“年轻人多锻炼”】。你会：", [
+    a("【当面问回报怎么安排】，不想再听空话。锻炼肌肉行，锻炼工资也行吧。", "锻炼肌肉行，锻炼工资也行吧。", ["STIRRER", "TWOFACE"], { chaos: 4 }, { energy: 2, information: 1, decision: -1, structure: -1 }),
+    a("【找同事聊聊】，看看大家是不是也这样。先找个懂的人，一起把气喘匀。", "先找个懂的人，一起把气喘匀。", ["EMOHEALER", "ALIVE"], { repair: 3 }, { energy: 1, information: 0, decision: -2, structure: 0 }),
+    a("【把工作量和回报摆开谈】，谈不拢就不额外接。成长可以，长期白送不行。", "成长可以，长期白送不行。", ["BOUNDARY", "COWHORSE"], { boundary: 4 }, { energy: 0, information: -1, decision: 2, structure: 2 }),
+    a("【整理成果去谈升职】，多做的也得换点东西。既然做了，就得拿去谈条件。", "既然做了，就得拿去谈条件。", ["LEADERCARD", "TRAITOR"], { bossy: 4 }, { energy: 2, information: 1, decision: 1, structure: 1 }),
+    a("【以后只做份内的事】，不争了，也不多送。期待下调，职责照办。", "期待下调，职责照办。", ["SILENTGOD", "AICOWORKER"], { boundary: 2, repair: 1 }, { energy: -2, information: -1, decision: 2, structure: 2 })
   ]),
-  q("不同的人在场", "同事私下问你【真实想法】，领导刚才却明确表达了【相反意见】。你一般会：", [
-    a("按事实说明【我为什么有不同看法】，对谁都差不多。", "我的意见没有领导特供版。", ["SILENTGOD", "BOUNDARY"], { boundary: 3, repair: 1 }, { energy: -2, information: -1, decision: 2, structure: 2 }),
-    a("在同事面前【直接吐槽领导的想法】，憋着太难受。", "刚才没开的麦，现在补上。", ["STIRRER", "ALIVE"], { chaos: 4 }, { energy: 2, information: 1, decision: -1, structure: -2 }),
-    a("先听同事怎么想，【帮他把问题说清楚】，不急着站队。", "先接住人，再接这个话题。", ["EMOHEALER", "POTMAN"], { repair: 4, pot: 1 }, { energy: 1, information: 0, decision: -2, structure: 1 }),
-    a("对领导表示支持，私下【顺着同事说两句】，谁也不得罪。", "场合切换，话术跟着换。", ["TWOFACE", "TRAITOR"], { chaos: 3, bossy: 3 }, { energy: 1, information: 2, decision: 0, structure: 0 }),
-    a("请大家【把不同意见当面说清】，最后定一个共同做法。", "别分两个频道了，一起对话。", ["BOUNDARY", "LEADERCARD"], { boundary: 3, bossy: 2 }, { energy: 1, information: -1, decision: 2, structure: 2 })
+  q("两套发言稿", "领导定了个你不看好的做法。散会后，同事问：【“你也觉得这主意不行吧？”】你会：", [
+    a("【把自己的真实想法说清楚】，对谁都一个说法。我的意见没有领导特供版。", "我的意见没有领导特供版。", ["SILENTGOD", "BOUNDARY"], { boundary: 3, repair: 1 }, { energy: -2, information: -1, decision: 2, structure: 2 }),
+    a("【直接和同事吐槽】，刚才忍着没说完。会议室闭麦，茶水间全开。", "会议室闭麦，茶水间全开。", ["STIRRER", "ALIVE"], { chaos: 4 }, { energy: 2, information: 1, decision: -1, structure: -2 }),
+    a("【先听听他担心什么】，不急着评价领导。先接住情绪，再接这个话题。", "先接住情绪，再接这个话题。", ["EMOHEALER", "POTMAN"], { repair: 4, pot: 1 }, { energy: 1, information: 0, decision: -2, structure: 1 }),
+    a("【对领导说好，对同事说对】，先顺着眼前的人。上班两副面孔，主打一个丝滑切换。", "上班两副面孔，主打一个丝滑切换。", ["TWOFACE", "TRAITOR"], { chaos: 3, bossy: 3 }, { energy: 1, information: 2, decision: 0, structure: 0 }),
+    a("【建议一起找领导谈】，别只在私下抱怨。两套话不如开一桌讲。", "两套话不如开一桌讲。", ["BOUNDARY", "LEADERCARD"], { boundary: 3, bossy: 2 }, { energy: 1, information: -1, decision: 2, structure: 2 })
   ]),
-  q("连续忙碌", "连续忙了好几天，你已经【很累、难以集中注意力】，工作还没结束。你会：", [
-    a("说明情况，【休息或请假】，不能一直硬撑。", "人不是充电五分钟就能继续转。", ["CRISPY", "BOUNDARY"], { fish: 3, boundary: 4 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
-    a("【撑到这一轮结束】，不想现在把事丢下。", "再撑一轮，是我最熟的台词。", ["COWHORSE", "POTMAN"], { carry: 4, pot: 3 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
-    a("请同事【分担一部分】，也和负责人调整安排。", "这次不单刷，发起组队。", ["CHOSEN", "EMOHEALER"], { carry: 2, repair: 3 }, { energy: 1, information: -1, decision: -1, structure: 2 }),
-    a("把重复步骤【合并或用工具处理】，少做一点机械劳动。", "给重复劳动装个省力开关。", ["AICOWORKER", "FISH"], { fish: 3, repair: 2 }, { energy: -2, information: -1, decision: 1, structure: 2 }),
-    a("只做完【最不能耽误的部分】，其他交接后休息。", "先守住底线，再守住体力。", ["FIREFIGHTER", "BOUNDARY"], { carry: 3, boundary: 3, repair: 2 }, { energy: 1, information: -1, decision: 2, structure: 1 })
+  q("低电量硬撑", "连续忙了好几天，你已经【累得很难集中注意力】，事情还没结束。你会：", [
+    a("【休息或请假】，先把自己照顾好。人不是充电五分钟就能继续转。", "人不是充电五分钟就能继续转。", ["CRISPY", "BOUNDARY"], { fish: 3, boundary: 4 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
+    a("【撑到这轮结束】，现在还放不下。再撑一轮，是我最熟的台词。", "再撑一轮，是我最熟的台词。", ["COWHORSE", "POTMAN"], { carry: 4, pot: 3 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
+    a("【找人分担、调整安排】，别一个人扛。这次不单刷，发起组队。", "这次不单刷，发起组队。", ["CHOSEN", "EMOHEALER"], { carry: 2, repair: 3 }, { energy: 1, information: -1, decision: -1, structure: 2 }),
+    a("【简化重复步骤】，能省一点力是一点。给重复劳动装个省力开关。", "给重复劳动装个省力开关。", ["AICOWORKER", "FISH"], { fish: 3, repair: 2 }, { energy: -2, information: -1, decision: 1, structure: 2 }),
+    a("【只处理最急的事】，交接完就休息。先守住底线，再守住体力。", "先守住底线，再守住体力。", ["FIREFIGHTER", "BOUNDARY"], { carry: 3, boundary: 3, repair: 2 }, { energy: 1, information: -1, decision: 2, structure: 1 })
   ]),
-  q("想换工作", "最近工作让你反复想【“世界那么大，我想去看看”】。你通常会：", [
-    a("【更新简历、看看机会】，先为离开做准备。", "世界那么大，先看看招聘价。", ["BOUNDARY", "CRISPY"], { boundary: 3, fish: 3 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
-    a("【写点吐槽发给朋友】，情绪过去了再说。", "辞职信写了，发送键还没按。", ["CRISPY", "FISH"], { fish: 4, boundary: 2 }, { energy: -2, information: 1, decision: -1, structure: -2 }),
-    a("【抱怨完继续做】，暂时没有真的离开的打算。", "嘴上已离职，明早照常打卡。", ["COWHORSE", "POTMAN"], { carry: 4, pot: 3 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
-    a("认真【算存款、查合同、列交接】，条件合适就走。", "跑路也要带上计划表。", ["SHIFTER", "SILENTGOD"], { boundary: 3, chaos: 2, pot: -1, repair: 1 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("【找领导谈条件】，看看工作量或发展机会能否调整。", "先谈一轮，谈不拢再看世界。", ["LEADERCARD", "TRAITOR"], { bossy: 4, boundary: 1 }, { energy: 2, information: 1, decision: 1, structure: 2 })
+  q("辞职一万次", "破事一件接一件，你又想起【“世界那么大，我想去看看”】。你会：", [
+    a("【更新简历看机会】，为离开做准备。世界那么大，先看看招聘价。", "世界那么大，先看看招聘价。", ["BOUNDARY", "CRISPY"], { boundary: 3, fish: 3 }, { energy: -2, information: -1, decision: 2, structure: 1 }),
+    a("【给朋友发一段吐槽】，先把这口气出了。辞职信写了，发送键还没按。", "辞职信写了，发送键还没按。", ["CRISPY", "FISH"], { fish: 4, boundary: 2 }, { energy: -2, information: 1, decision: -1, structure: -2 }),
+    a("【骂完继续干活】，暂时还不打算走。嘴上已离职，明早照常打卡。", "嘴上已离职，明早照常打卡。", ["COWHORSE", "POTMAN"], { carry: 4, pot: 3 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
+    a("【算存款、查合同、列交接】，能走就认真安排。跑路也要带上计划表。", "跑路也要带上计划表。", ["SHIFTER", "SILENTGOD"], { boundary: 3, chaos: 2, pot: -1, repair: 1 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【找领导谈工作量或发展】，谈不拢再走。先谈一轮，谈不拢再看世界。", "先谈一轮，谈不拢再看世界。", ["LEADERCARD", "TRAITOR"], { bossy: 4, boundary: 1 }, { energy: 2, information: 1, decision: 1, structure: 2 })
   ]),
-  q("谁的责任", "一件事出了问题，大家在找【“当时谁确认的”】，其中也有你经手的部分。你会：", [
-    a("【完整核对记录】，包括自己做过什么，再说明责任。", "我的记录也上桌，不能只查别人。", ["SILENTGOD", "BOUNDARY"], { boundary: 3, repair: 2 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
-    a("先说【我来处理】，自己能扛的先扛下来。", "锅还没落地，手已经伸出去了。", ["POTMAN", "FIREFIGHTER"], { pot: 4, carry: 3 }, { energy: 1, information: -1, decision: -1, structure: 0 }),
-    a("找参与的同事【一起说明经过】，不想一个人面对。", "背锅盟友，申请集合。", ["COWHORSE", "EMOHEALER"], { pot: 3, repair: 3 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
-    a("强调【别人确认过的部分】，尽量把自己摘出去。", "锅可以转，人不能粘。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 4, bossy: 1, pot: -2 }, { energy: 1, information: -1, decision: 2, structure: 1 }),
-    a("追问【“为什么当时没人复核？”】，把流程问题也摊开。", "不只问谁背锅，也问锅怎么来的。", ["STIRRER", "BOUNDARY"], { chaos: 3, boundary: 2 }, { energy: 2, information: 1, decision: 1, structure: -1 })
+  q("锅开始飞了", "事情出了错，群里开始问【“当时谁确认的？”】，其中也有你经手的部分。你会：", [
+    a("【完整翻记录】，自己的部分也照实说明。我的记录也上桌，不能只查别人。", "我的记录也上桌，不能只查别人。", ["SILENTGOD", "BOUNDARY"], { boundary: 3, repair: 2 }, { energy: -1, information: -2, decision: 2, structure: 2 }),
+    a("【先站出来处理】，问题不能一直晾着。锅还没落地，手已经伸出去了。", "锅还没落地，手已经伸出去了。", ["POTMAN", "FIREFIGHTER"], { pot: 4, carry: 3 }, { energy: 1, information: -1, decision: -1, structure: 0 }),
+    a("【叫上相关同事一起说明】，别让我一个人对线。背锅盟友，申请集合。", "背锅盟友，申请集合。", ["COWHORSE", "EMOHEALER"], { pot: 3, repair: 3 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
+    a("【强调别人确认过】，尽量把自己摘干净。锅可以转，人不能粘。", "锅可以转，人不能粘。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 4, bossy: 1, pot: -2 }, { energy: 1, information: -1, decision: 2, structure: 1 }),
+    a("【追问为什么没人复核】，流程问题也得讲。不只问谁背锅，也问锅怎么来的。", "不只问谁背锅，也问锅怎么来的。", ["STIRRER", "BOUNDARY"], { chaos: 3, boundary: 2 }, { energy: 2, information: 1, decision: 1, structure: -1 })
   ]),
-  q("摸鱼碰面", "你和同事都忙完了手头的事，他发现你在【刷手机】，你也发现他在休息。你会：", [
-    a("【对视一眼不拆穿】，各自安静待一会儿。", "摸鱼搭子达成。", ["FISH", "CRISPY"], { fish: 4 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
-    a("小声提醒【别耽误下一件事】，也不去告状。", "提醒一下，友军别误伤。", ["EMOHEALER", "BOUNDARY"], { repair: 3, boundary: 2 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
-    a("主动问【“看什么呢？”】，顺势一起聊起来。", "摸鱼现场，社交上线。", ["ALIVE", "STIRRER"], { chaos: 2, repair: 2 }, { energy: 2, information: 1, decision: -2, structure: -1 }),
-    a("【装没看见】，别人的休息和我无关。", "人机同事不会告密。", ["AICOWORKER", "SILENTGOD"], { fish: 2, boundary: 2 }, { energy: -2, information: -1, decision: 1, structure: 2 }),
-    a("先【看还有没有该收尾的事】，做完再安心歇。", "心里那张待办，还没肯下班。", ["CHOSEN", "COWHORSE"], { carry: 2, fish: 1 }, { energy: 0, information: -1, decision: 1, structure: 1 })
+  q("摸鱼碰头会", "手头的活忙完了，你和同事互相发现对方都在【刷手机】。你会：", [
+    a("【对视一眼不拆穿】，各摸各的。摸鱼搭子达成。", "摸鱼搭子达成。", ["FISH", "CRISPY"], { fish: 4 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
+    a("【提醒他别耽误下一件事】，也不会去告状。提醒一下，友军别误伤。", "提醒一下，友军别误伤。", ["EMOHEALER", "BOUNDARY"], { repair: 3, boundary: 2 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
+    a("【凑过去问看什么】，顺便聊起来。摸鱼现场，社交上线。", "摸鱼现场，社交上线。", ["ALIVE", "STIRRER"], { chaos: 2, repair: 2 }, { energy: 2, information: 1, decision: -2, structure: -1 }),
+    a("【装作没看见】，不参与别人的休息。人机同事不会告密。", "人机同事不会告密。", ["AICOWORKER", "SILENTGOD"], { fish: 2, boundary: 2 }, { energy: -2, information: -1, decision: 1, structure: 2 }),
+    a("【先检查有没有遗漏】，收完尾才能安心歇。心里那张待办，还没肯下班。", "心里那张待办，还没肯下班。", ["CHOSEN", "COWHORSE"], { carry: 2, fish: 1 }, { energy: 0, information: -1, decision: 1, structure: 1 })
   ]),
-  q("同事情绪低落", "同事看起来【很沮丧】，你问他，他说【“没事”】。你会：", [
-    a("问是不是任务太多，愿意【一起理理眼前的困难】。", "先看看能不能卸掉两件事。", ["EMOHEALER", "CHOSEN"], { repair: 4, carry: 1 }, { energy: 1, information: -1, decision: -2, structure: 2 }),
-    a("请他喝点东西，【听他讲讲】，不急着给建议。", "情绪价值供应商今日营业。", ["EMOHEALER", "ALIVE"], { repair: 4 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
-    a("说【想聊随时找我】，现在先给他一点空间。", "关心到了，追问暂停。", ["BOUNDARY", "CRISPY"], { boundary: 3, repair: 2, fish: 1 }, { energy: -1, information: -1, decision: 2, structure: 1 }),
-    a("不追问，默默【帮一点实际的忙】。", "话不多，支援已送达。", ["SILENTGOD", "AICOWORKER"], { repair: 3, legacy: 1 }, { energy: -2, information: -2, decision: 1, structure: 2 }),
-    a("【不继续问】，按平时的方式相处，免得他更尴尬。", "不强行安慰，也是一种陪着。", ["AICOWORKER", "BOUNDARY"], { boundary: 3, repair: 1 }, { energy: -2, information: 0, decision: 1, structure: 0 })
+  q("嘴上说没事", "同事看起来【情绪很低落】，你问他，他只回了句【“没事”】。你会：", [
+    a("【帮他理理手头的事】，看看能卸掉什么。先看看能不能卸掉两件事。", "先看看能不能卸掉两件事。", ["EMOHEALER", "CHOSEN"], { repair: 4, carry: 1 }, { energy: 1, information: -1, decision: -2, structure: 2 }),
+    a("【陪他聊聊、听他吐槽】，先不急着给建议。情绪价值供应商今日营业。", "情绪价值供应商今日营业。", ["EMOHEALER", "ALIVE"], { repair: 4 }, { energy: 2, information: 0, decision: -2, structure: 0 }),
+    a("【告诉他想聊就来找我】，现在给点空间。关心到了，追问暂停。", "关心到了，追问暂停。", ["BOUNDARY", "CRISPY"], { boundary: 3, repair: 2, fish: 1 }, { energy: -1, information: -1, decision: 2, structure: 1 }),
+    a("【不多问，帮点实际的忙】，做比说自在。话不多，支援已送达。", "话不多，支援已送达。", ["SILENTGOD", "AICOWORKER"], { repair: 3, legacy: 1 }, { energy: -2, information: -2, decision: 1, structure: 2 }),
+    a("【不继续追问】，照常相处，免得他尴尬。不强行安慰，也是一种陪着。", "不强行安慰，也是一种陪着。", ["AICOWORKER", "BOUNDARY"], { boundary: 3, repair: 1 }, { energy: -2, information: 0, decision: 1, structure: 0 })
   ]),
-  q("下班前加活", "快下班了，领导说一件新任务【“今晚就要”】，但你已经有安排。你会：", [
-    a("明确【今晚不方便】，请他另找人或调整时间。", "我的安排也算安排。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 2, fish: 1, pot: -1 }, { energy: -1, information: -2, decision: 2, structure: 1 }),
-    a("【取消自己的安排】，先把工作做完。", "对不起了，我的私人日程。", ["COWHORSE", "CHOSEN"], { carry: 4, pot: 2 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
-    a("请大家【分工一起做】，争取尽快结束。", "加急可以，别只有一个人急。", ["FIREFIGHTER", "EMOHEALER"], { carry: 3, repair: 3 }, { energy: 2, information: 0, decision: -1, structure: 1 }),
-    a("用现成材料【先交一个够用的版本】，尽量准点走。", "先交基础款，豪华版明天见。", ["AICOWORKER", "FISH"], { fish: 3, repair: 1 }, { energy: -2, information: -1, decision: 1, structure: 1 }),
-    a("和领导商量【明早先交重点】，把时间重新定清。", "今晚有约，明早有交付。", ["MEETINGBOT", "PPTGOD"], { bossy: 3, boundary: 1 }, { energy: 1, information: 1, decision: 1, structure: 2 })
+  q("下班前五分钟", "你已经约好下班后的事，领导突然塞来一项任务，说【“今晚必须弄完”】。你会：", [
+    a("【说明今晚不方便】，请他找别人或改时间。我的安排也算安排。", "我的安排也算安排。", ["SHIFTER", "BOUNDARY"], { boundary: 3, chaos: 2, fish: 1, pot: -1 }, { energy: -1, information: -2, decision: 2, structure: 1 }),
+    a("【取消自己的安排】，先把工作做完。对不起了，我的私人日程。", "对不起了，我的私人日程。", ["COWHORSE", "CHOSEN"], { carry: 4, pot: 2 }, { energy: 0, information: -1, decision: -1, structure: 1 }),
+    a("【叫大家分工一起做】，别只让一个人加班。加急可以，别只有一个人急。", "加急可以，别只有一个人急。", ["FIREFIGHTER", "EMOHEALER"], { carry: 3, repair: 3 }, { energy: 2, information: 0, decision: -1, structure: 1 }),
+    a("【用现成材料先交够用的】，尽量准点走。先交基础款，豪华版明天见。", "先交基础款，豪华版明天见。", ["AICOWORKER", "FISH"], { fish: 3, repair: 1 }, { energy: -2, information: -1, decision: 1, structure: 1 }),
+    a("【商量明早先交重点】，重新定个能做到的时间。今晚有约，明早有交付。", "今晚有约，明早有交付。", ["MEETINGBOT", "PPTGOD"], { bossy: 3, boundary: 1 }, { energy: 1, information: 1, decision: 1, structure: 2 })
   ]),
-  q("评价太笼统", "领导说你要【“更主动一点”】，却没说哪里需要改变。你会：", [
-    a("请他举【具体例子和期望做法】，下次才知道怎么改。", "改进可以，猜谜不行。", ["BOUNDARY", "CHOSEN"], { boundary: 4, carry: 1 }, { energy: 0, information: -2, decision: 2, structure: 2 }),
-    a("以后【更频繁汇报进度】，让他多看到自己在做事。", "工作要做，存在感也要交。", ["TRAITOR", "LEADERCARD"], { bossy: 4 }, { energy: 2, information: 1, decision: 1, structure: 2 }),
-    a("口头答应，但【暂时不改变做法】，这种评价太空了。", "建议收到了，执行方法没收到。", ["CRISPY", "FISH"], { fish: 4, boundary: 1 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
-    a("整理自己的成果，【下次拿事实一起讨论】。", "下次谈评价，带上作业本。", ["SILENTGOD", "PPTGOD"], { repair: 2, boundary: 2 }, { energy: -1, information: -2, decision: 1, structure: 2 }),
-    a("当面说好，转头【和同事吐槽一下】，先把气顺了。", "会议室里收到，茶水间里复盘。", ["TWOFACE", "ALIVE"], { chaos: 2, repair: 1 }, { energy: 1, information: 1, decision: -1, structure: 0 })
+  q("你要更主动", "绩效谈话，领导说【“你要更主动一点”】，却没说你哪里做得不够。你会：", [
+    a("【请他举具体例子】，下次才知道怎么改。改进可以，猜谜不行。", "改进可以，猜谜不行。", ["BOUNDARY", "CHOSEN"], { boundary: 4, carry: 1 }, { energy: 0, information: -2, decision: 2, structure: 2 }),
+    a("【以后多汇报、多露面】，先让他看见我。工作要做，存在感也要交。", "工作要做，存在感也要交。", ["TRAITOR", "LEADERCARD"], { bossy: 4 }, { energy: 2, information: 1, decision: 1, structure: 2 }),
+    a("【嘴上答应，暂时不改】，实在不知道要改啥。建议收到了，执行方法没收到。", "建议收到了，执行方法没收到。", ["CRISPY", "FISH"], { fish: 4, boundary: 1 }, { energy: -2, information: 0, decision: -1, structure: -2 }),
+    a("【带上自己的成果再聊】，用事实讨论评价。下次谈评价，带上作业本。", "下次谈评价，带上作业本。", ["SILENTGOD", "PPTGOD"], { repair: 2, boundary: 2 }, { energy: -1, information: -2, decision: 1, structure: 2 }),
+    a("【当面点头，出门吐槽】，先顺顺这口气。会议室里收到，茶水间里复盘。", "会议室里收到，茶水间里复盘。", ["TWOFACE", "ALIVE"], { chaos: 2, repair: 1 }, { energy: 1, information: 1, decision: -1, structure: 0 })
   ])
 ];
 

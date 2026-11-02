@@ -18,20 +18,20 @@ export function createSubmissionId() {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
-export async function callCommunityApi(endpoint, { method = "GET", data } = {}) {
+export async function callCommunityApi(endpoint, { method = "GET", data, adminKey, signal } = {}) {
   const base = new URL(import.meta.env.BASE_URL, window.location.href);
   const controller = new AbortController();
   const timeout = window.setTimeout(() => controller.abort(), 12000);
   try {
     const response = await fetch(new URL(`api/${endpoint}`, base), {
       method,
-      headers: method === "GET" ? {} : { "Content-Type": "application/json" },
-      body: method === "GET" ? undefined : JSON.stringify({ ...data, token: getToken(), version: QUESTIONNAIRE_VERSION }),
-      signal: controller.signal
+      headers: { ...(method === "GET" ? {} : { "Content-Type": "application/json" }), ...(adminKey ? { Authorization: `Bearer ${adminKey}` } : {}) },
+      body: method === "GET" ? undefined : JSON.stringify(adminKey ? data : { ...data, token: getToken(), version: QUESTIONNAIRE_VERSION }),
+      signal: signal ? AbortSignal.any([signal, controller.signal]) : controller.signal
     });
     if (!response.headers.get("content-type")?.includes("application/json")) throw new Error("统计服务暂未连接，请稍后再试。测试结果仍保存在本机。");
     const result = await response.json();
-    if (!response.ok) throw new Error(result.error || "暂时未保存成功，请稍后再试");
+    if (!response.ok) { const error = new Error(result.error || "暂时未保存成功，请稍后再试"); error.status = response.status; throw error; }
     return result;
   } catch (error) {
     if (error.name === "AbortError" || error instanceof TypeError) throw new Error("暂时连接不上统计服务，请稍后重试。");

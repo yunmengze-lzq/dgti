@@ -184,7 +184,7 @@ export function pickType(score) {
     .sort((left, right) => right.value - left.value);
 
   const best = sortedRoles[0];
-  const match = clamp(Math.round(best.value), 68, 96);
+  const match = clamp(Math.round(best.value), 0, 100);
 
   return { profile: best.profile, match, topRoles: sortedRoles.slice(0, 4) };
 }

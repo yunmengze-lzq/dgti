@@ -1,122 +1,83 @@
-# 打工人 TI
+# 打工人 TI · 2.0
 
-一个面向职场场景的轻娱乐人格测试 H5/网页应用。项目把 MBTI/SBTI 的轻测评体验改造成「打工人生态位」：通过较短题库识别用户的职场行为模式，生成角色结果、详细分析、副标签、羁绊关系、分享长图，并预留打工人周边/陶瓷小人商品页。
+25 道日常职场情境题、20 个原创角色、详细解读、好友羁绊与结果长图。手机和桌面都可使用，默认保留几何风立绘。
 
-> 定位说明：打工人 TI 是娱乐型职场人格测试，不是临床、招聘或心理诊断工具。题目设计参考行为偏好、情境选择和职场互动模式，用来提供认同感、传播梗点和自我观察线索。
+本产品用于娱乐与自我观察。参考人格与工作环境研究的概念，题目、角色分类和计分为自编，尚未进行信效度验证，不用于心理诊断、招聘或能力评定。详见 [题库参考与方法](docs/QUESTIONNAIRE.md)。
 
-## 当前能力
+## 本版变化
 
-- 25 道职场场景题，选择后自动进入下一题。
-- 20 个打工人角色结果，包含主角色、副标签、行为分数和详细解读。
-- 支持结果保存、分享链接、结果截图/长图导出。
-- 支持羁绊匹配，包括好闺蜜/好 gay 蜜、摸鱼搭子、背锅盟友、路人同事、孽缘上下游、工位天敌、互为领导、赛博甲乙方、屎山继承链。
-- 默认展示 MBTI 几何风格立绘，精修立绘暂时隐藏备用。
-- 响应式 H5 和桌面网页布局。
-- 商品展示、地址管理、模拟下单和小额打赏入口，用于后续接入陶瓷小人周边和真实支付。
-- 打赏入口支持支付宝二维码、自填金额、本机累计统计和感谢回执。
-
-## 支付说明
-
-当前版本是前端静态原型：小店订单为模拟支付，打赏金额以用户提交的登记金额做本机统计。个人支付宝收款码无法让网页自动识别真实到账金额；如果要自动确认付款、统计真实金额，需要接入支付宝商家支付能力，由服务端创建订单并通过支付查询或异步通知同步结果。
-
-## 技术栈
-
-- React 19
-- Vite 7
-- CSS 手写响应式界面
-- `html-to-image` 用于结果图导出
+- 隐藏商品、地址和模拟下单入口，独立保留自愿打赏。现有本机商品数据不删除。
+- 25 道题改为通用职场场景，保留 5 种做法和选后吐槽；调整发生语义变化的选项权重。
+- 新增整体使用统计、角色分布、反馈分类和体验评分。
+- 内置 100 份明确标注的虚拟案例，单独切换，永不写入真实样本库。
+- 匿名结果和意见存入 SQLite，支持多设备汇总、重复提交去重、撤回。
+- 移除结果页和图鉴的模拟稀有度；角色倾向分不再强行设置 68 分下限，也不再包装成准确率。
 
 ## 本地运行
 
+要求 Node.js 24+，使用其内置 SQLite，无需另装数据库。
+
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-默认开发地址通常是：
+打开 Vite 输出的地址（默认 http://localhost:5173/）。开发服务器内置同源 API，默认数据库为 `var/dgti.sqlite`，已从 Git 排除。
 
-```text
-http://localhost:5173/
-```
-
-## 校验和构建
-
-校验打工人 TI 题库和角色可达性：
-
-```bash
-npm run validate:dgti
-```
-
-构建生产包：
+## 构建与验证
 
 ```bash
 npm run build
+npm run test:api
+npm run validate:dgti
+npm run validate:dgti:bonds
 ```
 
-打包一个可分发的静态 HTML 预览包：
+角色可达性测试仅说明计分能得到每个结果，不代表科学效度或人群真实比例。
+
+## 生产运行
 
 ```bash
-npm run package:html
+VITE_BASE_PATH=/dgti/ npm run build
+DGTI_DB_PATH=/var/lib/dgti/dgti.sqlite DGTI_PUBLIC_ORIGIN=https://your-domain.example npm start
 ```
 
-产物会生成到：
+启动前确保运行用户对数据库目录有写入权限。服务默认只监听 `127.0.0.1:8787`，页面与 API 都在 `/dgti/` 下。Nginx 仅代理 `/dgti/`，不要覆盖其他应用。具体步骤见 [运营部署说明](docs/OPERATIONS.md)。
 
-```text
-dist/
-output/dgti-html-preview.zip
-```
+**只上传 dist 或使用旧静态部署脚本，不会启动统计服务。** 纯静态预览仍能测试、打赏、查看演示分布，但真实统计和意见提交会明确提示不可用。`npm run package:html` 仍用于这种预览。
 
-## 部署到服务器 `/dgti/`
+## 数据口径
 
-项目内置了静态部署脚本，会把 Vite 生产包构建为 `/dgti/` 子路径可访问的版本，并上传到服务器的 Nginx 静态目录。
+- 不自动上传作答。用户完成后勾选同意并提交，服务端重新计分。
+- 持久保存匿名凭证摘要、题库版本、角色、四维分数、答卷摘要、提交次数和时间；原始选项不落库。昵称、联系方式、地址、羁绊不上传。
+- “参与设备”按匿名浏览器凭证与题库版本去重，保留最新结果；不等于实名人数。相同答案重复提交不累计，不同答案重测计入有效提交次数。
+- 意见正文只供运营者在服务器导出，公开页只有分类和体验评分汇总，评分不是准确率。
+- 用户可在统计页撤回本浏览器的结果与意见。清空浏览器数据后无法用原凭证撤回。
+- 100 份虚拟案例来自固定种子的程序模拟，只演示界面；不计入真实人数、反馈或收入。
+- SQLite 位于持久目录，重启后保留数据。备份和恢复方式见部署说明。
+
+查看运营反馈（在服务器项目目录执行，输出包含私有意见正文）：
 
 ```bash
-HOST=root@159.89.211.104 \
-SERVER_NAME=159.89.211.104 \
-PUBLIC_PATH=/dgti/ \
-bash scripts/deploy-static-server.sh
+DGTI_DB_PATH=/var/lib/dgti/dgti.sqlite npm run --silent export:feedback
 ```
 
-脚本默认行为：
+## 打赏与售卖边界
 
-- 本地执行 `VITE_BASE_PATH=/dgti/ npm run build`
-- 打包 `dist/`
-- 上传到服务器 `/tmp/dgti.tar.gz`
-- 解压到 `/var/www/dgti`
-- 为 Nginx 写入 `/etc/nginx/snippets/dgti-location.conf`
-- 在当前启用的 Nginx server 配置中 include 该 location
-- reload Nginx
+目前保留个人支付宝收款码，金额由用户在支付宝填写。网页只允许登记最近 50 笔本机自报金额，无法确认到账。打赏不解锁任何内容，也不是购买凭证。
 
-部署完成后访问：
+本版没有新增付费解锁或兑换码。需要自动售卖测试时，还需商户支付、订单校验与访问权限逻辑；不能把静态收款码或“已登记”按钮当成真实付款验证。
+
+## 主要文件
 
 ```text
-http://159.89.211.104/dgti/
+src/views/WctiExperience.jsx      测试、结果、羁绊与打赏
+src/components/DgtiCommunity.jsx 统计、意见、参考来源
+src/data/dgti.js                  题库与角色
+src/data/dgtiResearch.js          版本与逐题概念参考
+src/lib/dgtiScoring.js            自定义计分
+src/lib/dgtiStatistics.js         汇总和独立演示案例
+server/api.js                    校验与匿名数据接口
+server/store.js                  SQLite 持久化
+server/index.js                  生产静态页面和 API 服务
 ```
-
-## 服务器当前注意点
-
-之前访问 `/dgti/` 出现过旧的「德州扑克」页面，说明服务器上已有别的服务占用了同一路径或 Nginx location 代理规则残留。后续部署时需要确认：
-
-- SSH 能从本机正常连上服务器。
-- `/dgti/` 的 Nginx location 已经从旧 Express 服务切到 `/var/www/dgti` 静态目录。
-- 如果仍然显示旧项目，需要检查 `nginx -T` 输出里所有 `location /dgti`、`location ^~ /dgti/`、`proxy_pass` 规则的优先级。
-
-## 代码结构
-
-```text
-src/App.jsx                         应用入口
-src/views/WctiExperience.jsx         打工人 TI 主体验
-src/data/dgti.js                     题库、角色、羁绊和展示文案
-src/lib/dgtiScoring.js               计分与结果匹配逻辑
-src/wcti.css                         主界面样式
-public/assets/dgti/                  角色、羁绊和风格参考图
-scripts/validate-dgti-scoring.mjs    题库与角色可达性校验
-scripts/deploy-static-server.sh      静态服务器部署脚本
-```
-
-## 后续可优化
-
-- 给每个角色继续补齐统一的 MBTI 几何风格立绘。
-- 完善商品页的真实支付、订单、地址后端和打赏到账回调。
-- 给羁绊结果做第二版美术风格。
-- 上线前接入 HTTPS、域名和基础访问统计。

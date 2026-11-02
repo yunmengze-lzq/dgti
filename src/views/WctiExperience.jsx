@@ -13,7 +13,9 @@ import {
   shopProducts
 } from "../data/dgti.js";
 import { calculateBond, getBondImage, parseBondCode } from "../lib/dgtiBonds.js";
-import { clamp, getFactorLevel, getRoleRarityStats, getTopFactors, pickType, scoreAnswers } from "../lib/dgtiScoring.js";
+import { clamp, getFactorLevel, getTopFactors, pickType, scoreAnswers } from "../lib/dgtiScoring.js";
+import { QUESTIONNAIRE_VERSION } from "../data/dgtiResearch.js";
+import { CommunityView, ResearchNotes, ResultContribution } from "../components/DgtiCommunity.jsx";
 
 const profileByCode = Object.fromEntries(roleProfiles.map((profile) => [profile.code, profile]));
 const crowdSignals = ["6 / 38", "17 / 38", "29 / 38"];
@@ -287,6 +289,7 @@ function normalizeArtStyle(artStyle) {
 function getFallbackState() {
   return {
     phase: "home",
+    questionnaireVersion: QUESTIONNAIRE_VERSION,
     artStyle: "mbti",
     identity: {
       alias: "",
@@ -311,7 +314,14 @@ function readStoredState() {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return getFallbackState();
     const stored = { ...getFallbackState(), ...JSON.parse(raw) };
-    return { ...stored, phase: stored.phase === "atlas" ? "home" : stored.phase, artStyle: normalizeArtStyle(stored.artStyle) };
+    const changed = stored.questionnaireVersion !== QUESTIONNAIRE_VERSION || !JSON.parse(raw).questionnaireVersion;
+    return {
+      ...stored,
+      ...(changed ? { legacyAssessment: { answers: stored.answers, resultArchive: stored.resultArchive }, answers: {}, currentIndex: 0, questionnaireUpdated: Object.keys(stored.answers).length > 0 } : {}),
+      questionnaireVersion: QUESTIONNAIRE_VERSION,
+      phase: changed && ["quiz", "result", "bonds"].includes(stored.phase) ? "home" : stored.phase === "atlas" ? "home" : stored.phase === "shop" ? "support" : stored.phase,
+      artStyle: normalizeArtStyle(stored.artStyle)
+    };
   } catch {
     return getFallbackState();
   }
@@ -566,7 +576,7 @@ function Header({ phase, setPhase, isComplete, artStyle, setArtStyle }) {
     ["quiz", "开测"],
     ["result", "结果"],
     ["bonds", "羁绊"],
-    ["shop", "小店"]
+    ["support", "打赏"]
   ];
 
   return (
@@ -607,7 +617,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
           <p className="eyebrow">测测你是哪种工位生态位</p>
           <h1>不是测你是什么人，是测你在这坨职场生态里通常扮演什么角色。</h1>
           <p className="hero-lede">
-            {questionBank.length} 道职场情境题，匹配 {roleProfiles.length} 个打工人人格。能自嘲、能互测、能收集羁绊，也能把本命角色做成陶瓷小人。
+            {questionBank.length} 道日常职场情境题，看看你更像 {roleProfiles.length} 个角色里的谁。按最近一个月的真实反应来选，再找朋友碰一碰羁绊。
           </p>
           <div className="hero-actions">
             <button className="primary-action" type="button" onClick={onStart}>
@@ -616,15 +626,15 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
             <button className="secondary-action" type="button" onClick={scrollToRoleAtlas}>
               先看角色图鉴
             </button>
-            <button className="secondary-action" type="button" onClick={() => setPhase("shop")}>
-              逛陶瓷小店
+            <button className="secondary-action" type="button" onClick={() => setPhase("community")}>
+              看整体统计
             </button>
           </div>
           <div className="pill-row">
             <span>仅供娱乐</span>
             <span>不做心理诊断</span>
-            <span>本地轻绑定</span>
-            <span>H5 友好</span>
+            <span>结果保存在本机</span>
+            <span>匿名统计自愿参与</span>
           </div>
         </div>
         <div className="hero-stage" aria-label="打工人人格角色预览">
@@ -647,7 +657,7 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
         <div className="section-heading">
           <p className="eyebrow">轻量绑定</p>
           <h2>先给你的工位命格留一个本地代号</h2>
-          <p>不要求登录，不收手机号。当前原型只把代号、答题草稿和你主动录入的羁绊保存在本机浏览器。</p>
+          <p>不要求登录，不收手机号。代号、答题草稿和羁绊保存在本机；只有你主动提交的匿名结果与意见会进入整体统计。</p>
         </div>
         <div className="identity-grid">
           <label className="field-control">
@@ -708,6 +718,8 @@ function HomeView({ identity, onIdentityChange, onStart, setPhase, hasAnswers, a
           </article>
         </div>
       </section>
+
+      <section className="dgti-section"><ResearchNotes /></section>
 
       <RoleAtlasSection
         artStyle={artStyle}
@@ -809,8 +821,6 @@ function QuizView({ answers, currentIndex, onSelectAnswer, crowdSignal, onNext, 
 function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, resultArchive, onSaveResult }) {
   const { profile, match, topRoles } = result;
   const group = groupMeta[profile.group];
-  const rarityStats = getRoleRarityStats();
-  const currentRarity = rarityStats.byCode[profile.code];
   const alias = identity.alias || `匿名工位-${identity.userId.slice(0, 3)}`;
   const topFactors = getTopFactors(score.factors, factorMeta.length);
   const bondCode = makeBondCode(identity, profile);
@@ -895,8 +905,8 @@ function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, 
         <div className="result-copy">
           <p className="eyebrow">{group.name}</p>
           <h1>{profile.name}</h1>
-          <p className="result-code">{profile.code} · 匹配度 {match}% · 稀有度参考 {currentRarity?.percent ?? "-"}%</p>
-          {currentRarity && <p className="rarity-badge">{currentRarity.label} · {roleProfiles.length} 型里第 {currentRarity.rank} 稀有</p>}
+          <p className="result-code">{profile.code} · 角色倾向分 {match} / 100</p>
+          <p className="rarity-badge">描述这次作答的倾向，不是准确率或能力分</p>
           <p className="result-sentence">{profile.tagline}</p>
           <p>{profile.copy}</p>
           <div className="tag-cloud">
@@ -991,12 +1001,11 @@ function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, 
           <h2>你的备选工位皮肤</h2>
           <div className="rank-list">
             {topRoles.slice(1, 4).map(({ profile: ranked, score: rankedScore }, index) => {
-              const rarity = rarityStats.byCode[ranked.code];
               return (
               <button key={ranked.code} type="button" onClick={openRoleAtlas}>
                 <span>{index + 2}</span>
                 <strong>{ranked.name}</strong>
-                <i>{rankedScore} 分 · {rarity?.label ?? "模拟中"} {rarity?.percent ?? "-"}%</i>
+                <i>倾向分 {rankedScore}</i>
               </button>
               );
             })}
@@ -1101,7 +1110,6 @@ function ResultView({ identity, score, result, setPhase, artStyle, setArtStyle, 
 }
 
 function RoleAtlasSection({ setPhase, artStyle }) {
-  const rarityStats = getRoleRarityStats();
 
   return (
     <section className="dgti-section home-role-atlas" id="home-role-atlas">
@@ -1128,7 +1136,6 @@ function RoleAtlasSection({ setPhase, artStyle }) {
             {roleProfiles
               .filter((profile) => profile.group === groupKey)
               .map((profile) => {
-                const rarity = rarityStats.byCode[profile.code];
                 return (
                 <article className="type-card" key={profile.code}>
                   <CharacterArtwork profile={profile} artStyle={artStyle} size="small" />
@@ -1136,7 +1143,6 @@ function RoleAtlasSection({ setPhase, artStyle }) {
                     <span>{profile.code}</span>
                     <h3>{profile.name}</h3>
                     <strong>{profile.meme}</strong>
-                    {rarity && <small className="type-rarity">{rarity.label} · 模拟 {rarity.percent}%</small>}
                     <p>{profile.tagline}</p>
                   </div>
                 </article>
@@ -1377,14 +1383,16 @@ function TipJar({ identity, profile, donations, onAddDonation }) {
   const [amount, setAmount] = useState("8.88");
   const [message, setMessage] = useState("");
   const [thanks, setThanks] = useState("");
+  const [recorded, setRecorded] = useState(false);
   const stats = getDonationStats(donations);
   const alias = identity.alias || `匿名工位-${identity.userId.slice(0, 3)}`;
   const lastDonation = donations[0];
 
   const recordDonation = () => {
-    const value = Number.parseFloat(amount);
-    if (!Number.isFinite(value) || value <= 0) {
-      setThanks("先填一个有效金额，不然系统只能识别到一阵心意。");
+    if (recorded) return;
+    const value = Number(amount);
+    if (!/^\d+(\.\d{1,2})?$/.test(amount) || !Number.isFinite(value) || value < 0.01 || value > 10000) {
+      setThanks("请填写 0.01–10000 元以内的金额，最多两位小数。");
       return;
     }
     const normalizedAmount = Math.round(value * 100) / 100;
@@ -1394,13 +1402,14 @@ function TipJar({ identity, profile, donations, onAddDonation }) {
       amount: normalizedAmount,
       message: message.trim(),
       alias,
-      profileName: profile.name,
-      profileCode: profile.code,
+      profileName: profile?.name || "还没开测的朋友",
+      profileCode: profile?.code || "",
       createdAt: new Date().toISOString()
     };
     onAddDonation(donation);
     setMessage("");
-    setThanks(`收到 ${formatTipMoney(normalizedAmount)} 的蚂蚁森林能量，感谢 ${alias} 给打工人 TI 续命。`);
+    setRecorded(true);
+    setThanks(`已在本机登记 ${formatTipMoney(normalizedAmount)}，感谢 ${alias} 的支持！到账请以支付宝账单为准。`);
   };
 
   return (
@@ -1408,18 +1417,20 @@ function TipJar({ identity, profile, donations, onAddDonation }) {
       <div className="tip-jar-card">
         <div className="tip-copy">
           <p className="eyebrow">打赏回血站</p>
-          <h2>觉得测得有点准，就给项目投喂一口能量。</h2>
-          <p>扫码后网页无法自动验账。你可以把金额登记进本机账本，页面会统计支持次数和金额，并回一句像样的感谢。</p>
+          <h2>有被戳中，就请作者喝一口。</h2>
+          <p>自愿打赏，不影响测试和结果。金额在支付宝里填写，下面仅记录你自行登记的金额，不代表确认到账。</p>
           <div className="tip-stats" aria-label="本机打赏统计">
-            <span><strong>{stats.count}</strong> 次支持</span>
-            <span><strong>{formatTipMoney(stats.total)}</strong> 本机累计</span>
+            <span><strong>{stats.count}</strong> 条本机登记</span>
+            <span><strong>{formatTipMoney(stats.total)}</strong> 自报累计</span>
             <span><strong>{stats.max ? formatTipMoney(stats.max) : "待点亮"}</strong> 单次最高</span>
           </div>
+          <small>仅保留本浏览器最近 50 笔自报登记。</small>
         </div>
 
         <div className="tip-qr-panel">
-          <img src={tipQrImage} alt="支付宝打赏收款码" loading="lazy" />
-          <span>打开支付宝扫一扫</span>
+          <a href={tipQrImage} target="_blank" rel="noreferrer"><img src={tipQrImage} alt="支付宝打赏收款码，点击查看原图" loading="lazy" /></a>
+          <span>支付宝扫码 · 金额自行填写</span>
+          <a className="text-action" href={tipQrImage} download="打工人TI-支付宝收款码.jpg">保存收款码</a>
         </div>
 
         <div className="tip-form">
@@ -1436,16 +1447,16 @@ function TipJar({ identity, profile, donations, onAddDonation }) {
             ))}
           </div>
           <label className="field-control">
-            <span>实际打赏金额</span>
+            <span>自行登记金额</span>
             <input
               value={amount}
               onChange={(event) => setAmount(event.target.value)}
               inputMode="decimal"
-              aria-label="实际打赏金额"
+              aria-label="自行登记金额"
             />
           </label>
           <label className="field-control">
-            <span>感谢回执备注</span>
+            <span>本机备注（选填，不发送给作者）</span>
             <input
               value={message}
               onChange={(event) => setMessage(event.target.value)}
@@ -1453,12 +1464,13 @@ function TipJar({ identity, profile, donations, onAddDonation }) {
               placeholder="比如：摸鱼圣体前来续命"
             />
           </label>
-          <button className="primary-action" type="button" onClick={recordDonation}>
-            我已打赏，登记回血
+          <button className="primary-action" type="button" disabled={recorded} onClick={recordDonation}>
+            {recorded ? "本次已登记，谢谢支持" : "登记本次打赏"}
           </button>
+          {recorded && <button className="text-action" type="button" onClick={() => { setRecorded(false); setThanks(""); setAmount(""); }}>另记一笔</button>}
           {(thanks || lastDonation) && (
             <p className="tip-thanks" role="status">
-              {thanks || `${lastDonation.alias} 刚刚支持了 ${formatTipMoney(lastDonation.amount)}，项目血条 +1。`}
+              {thanks || `上次自报登记 ${formatTipMoney(lastDonation.amount)}，感谢支持。`}
             </p>
           )}
         </div>
@@ -1780,7 +1792,7 @@ export function WctiExperience() {
 
   const setPhase = (phase) => {
     window.clearTimeout(quizAdvanceTimer.current);
-    setState((current) => ({ ...current, phase }));
+    setState((current) => ({ ...current, phase: phase === "shop" ? "support" : phase }));
     window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
   };
 
@@ -1866,6 +1878,7 @@ export function WctiExperience() {
         artStyle={state.artStyle}
         setArtStyle={setArtStyle}
       />
+      {state.questionnaireUpdated && state.phase === "home" && <p className="questionnaire-update">题库已更新为更通用的职场场景，旧作答已留在本机备份。重新测试可参与本版统计。<button className="text-action" type="button" onClick={() => setState((current) => ({ ...current, questionnaireUpdated: false }))}>知道了</button></p>}
       {state.phase === "home" && (
         <HomeView
           identity={state.identity}
@@ -1900,6 +1913,7 @@ export function WctiExperience() {
           onSaveResult={saveCurrentResult}
         />
       )}
+      {state.phase === "result" && isComplete && <ResultContribution answers={state.answers} onViewCommunity={() => setPhase("community")} />}
       {state.phase === "result" && !isComplete && (
         <HomeView
           identity={state.identity}
@@ -1930,21 +1944,16 @@ export function WctiExperience() {
           artStyle={state.artStyle}
         />
       )}
-      {state.phase === "shop" && (
-        <ShopView
+      {state.phase === "support" && (
+        <main className="support-view page-enter"><TipJar
           identity={state.identity}
-          result={result}
-          isComplete={isComplete}
-          addresses={state.addresses || []}
-          orders={state.orders || []}
+          profile={isComplete ? result.profile : null}
           donations={state.donations || []}
-          onSaveAddress={(address) => setState((current) => ({ ...current, addresses: [address, ...(current.addresses || [])].slice(0, 8) }))}
-          onPlaceOrder={(order) => setState((current) => ({ ...current, orders: [order, ...(current.orders || [])].slice(0, 12) }))}
           onAddDonation={(donation) => setState((current) => ({ ...current, donations: [donation, ...(current.donations || [])].slice(0, 50) }))}
-          setPhase={setPhase}
-          artStyle={state.artStyle}
-        />
+        /><section className="dgti-section"><button className="secondary-action" type="button" onClick={() => setPhase("community")}>看整体统计 / 留下意见</button></section></main>
       )}
+      {state.phase === "community" && <CommunityView setPhase={setPhase} />}
+      {state.phase !== "quiz" && <footer className="community-footer"><button className="text-action" type="button" onClick={() => setPhase("community")}>使用统计与意见</button><button className="text-action" type="button" onClick={() => setPhase("support")}>支持作者</button><span>原创情境测试 · 娱乐与自我观察</span></footer>}
     </div>
   );
 }

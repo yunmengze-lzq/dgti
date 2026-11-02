@@ -93,8 +93,8 @@ export function calculateBond(selfProfile, friendProfile, relation) {
   }
   if (relation === "同事" && pairSet.has("WISHPOOL")) {
     return makeBondResult("upstream-downstream-karma", score, {
-      name: "许愿进下游",
-      copy: "一个顺便许愿，一个负责把顺便变成排期，你们的缘分常常从字段变更开始。"
+      name: "神灯接单中",
+      copy: "一个说出愿望，一个认真找办法实现。先讲清能做到哪步，别把神灯用成无限续杯。"
     });
   }
   if (relation === "互相审判" && pairSet.has("LEADERCARD")) {

@@ -20,7 +20,7 @@ export const profileAxisTargets = {
   LEADERCARD: { energy: 76, information: 60, decision: 70, structure: 78 },
   PPTGOD: { energy: 62, information: 72, decision: 64, structure: 76 },
   MEETINGBOT: { energy: 78, information: 50, decision: 52, structure: 84 },
-  WISHPOOL: { energy: 68, information: 84, decision: 36, structure: 24 },
+  WISHPOOL: { energy: 68, information: 76, decision: 24, structure: 42 },
   STIRRER: { energy: 78, information: 74, decision: 34, structure: 22 },
   SHITMOUNTAIN: { energy: 34, information: 42, decision: 66, structure: 58 },
   TWOFACE: { energy: 64, information: 68, decision: 44, structure: 46 },
@@ -284,7 +284,7 @@ export function getRoleRarityStats(sampleSize = 3800) {
 export function buildTargetAnswers(profile) {
   const axisTarget = profileAxisTargets[profile.code] || {};
 
-  return Object.fromEntries(
+  const answers = Object.fromEntries(
     questionBank.map((question, questionIndex) => {
       let bestAnswerIndex = 0;
       let bestValue = -Infinity;
@@ -309,6 +309,15 @@ export function buildTargetAnswers(profile) {
       return [questionIndex, bestAnswerIndex];
     })
   );
+  if (pickType(scoreAnswers(answers)).profile.code === profile.code) return answers;
+  // A per-question greedy fixture can narrowly favor a neighboring role overall.
+  for (const [i, question] of questionBank.entries()) {
+    for (let j = 0; j < question.answers.length; j += 1) {
+      const candidate = { ...answers, [i]: j };
+      if (pickType(scoreAnswers(candidate)).profile.code === profile.code) return candidate;
+    }
+  }
+  return answers;
 }
 
 export function validateRoleReachability() {

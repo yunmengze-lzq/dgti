@@ -1,4 +1,4 @@
-export const QUESTIONNAIRE_VERSION = "2026-11-02.1";
+export const QUESTIONNAIRE_VERSION = "2026-11-02.2";
 
 export const researchSources = [
   { id: "ipip", title: "IPIP · 大五人格研究", url: "https://ipip.ori.org/newBigFive5broadKey.htm", note: "参考主动表达、合作、计划与情绪反应等行为概念。IPIP 材料允许商业使用；本测试不是 IPIP 原量表，也不输出大五人格分数。" },

@@ -9,7 +9,7 @@ import { createApi } from "./api.js";
 import { openStore } from "./store.js";
 import { QUESTIONNAIRE_VERSION, questionReferences } from "../src/data/dgtiResearch.js";
 import { roleProfiles, questionBank } from "../src/data/dgti.js";
-import { buildTargetAnswers } from "../src/lib/dgtiScoring.js";
+import { buildTargetAnswers, pickType, scoreAnswers } from "../src/lib/dgtiScoring.js";
 import { getDemoStatistics, summarizeResults } from "../src/lib/dgtiStatistics.js";
 
 test("anonymous results and feedback persist, deduplicate, and withdraw without exposing records", async () => {
@@ -105,6 +105,23 @@ test("100 demonstration cases stay separate and every question has a reference m
   assert.equal(demo.feedback.count, 0);
   assert.equal(questionReferences.length, questionBank.length);
   assert.equal(demo.roles.filter((r) => r.count > 0).length, 20);
+});
+
+test("options lead with one complete action and every role remains reachable after the genie revision", () => {
+  for (const question of questionBank) {
+    assert.equal(new Set(question.answers.map((answer) => answer.text)).size, 5);
+    for (const answer of question.answers) {
+      assert.match(answer.text, /^【[^【】]+[。？][”"]?】[^【】]+$/);
+      assert.equal(answer.text.endsWith(answer.note), true);
+    }
+  }
+  for (const profile of roleProfiles) {
+    assert.equal(pickType(scoreAnswers(buildTargetAnswers(profile))).profile.code, profile.code);
+  }
+  const genie = roleProfiles.find((profile) => profile.code === "WISHPOOL");
+  assert.equal(genie.name, "职场神灯");
+  assert.equal(genie.group, "support");
+  for (const [i, j] of [[6, 2], [14, 4], [15, 4]]) assert.equal(questionBank[i].answers[j].roles[0], genie.code);
 });
 
 test("request rate limit returns an explicit retryable error", async () => {

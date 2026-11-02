@@ -113,9 +113,9 @@ const roleDeepReadings = {
     advice: "会议前先写清楚要产出什么，不然永动机会把大家日历吸干。"
   },
   WISHPOOL: {
-    why: "你对可能性和愿景很敏感，常会先看到“还能不能更大一点”。",
-    stress: "当资源边界不清，你的脑洞容易变成别人的加班。",
-    advice: "许愿之前加一句优先级和预算，神灯会更像需求文档。"
+    why: "别人提出想要的效果时，你先想的是怎么帮他做出来，而不是谁该接这个活。你愿意换方法、找资源，把含糊的愿望变成实际帮助。",
+    stress: "越被人信任，你越容易多答应一件。最后别人的愿望都有了着落，你自己的安排却被挤掉。",
+    advice: "答应前确认目标、时间和自己能投入的精力。把“我都能做”改成“这部分我可以帮你”，也给神灯留一次拒绝的机会。"
   },
   STIRRER: {
     why: "你很能感知沉闷局面里的戏剧张力，答案里有明显的搅动、锐评和点火倾向。",
@@ -216,9 +216,9 @@ const rolePlaybooks = {
     cooperate: "会前给议题，会中定结论，会后写 owner。否则你只是给大家的日历增加工伤。"
   },
   WISHPOOL: {
-    shine: "你有想象力，能看到别人没想到的可能性，适合早期脑暴、产品方向和体验升级。",
-    trap: "你口中的“顺便”，常常是别人下周的加班。愿望如果没有优先级，就是需求污染。",
-    cooperate: "让你提想法很好，但每个愿望后面要跟预算、优先级和砍掉什么。神灯也要看排期。"
+    shine: "你擅长把别人的愿望翻译成能尝试的办法。缺资源时会找替代方案，不会只回复一句做不了。与消防员不同，你不只救急；与牛马不同，你常常是主动揽下别人的愿望。",
+    trap: "热心不代表资源无限。你容易把别人一句随口的期待，当成自己必须兑现的承诺；越能帮上忙，越难拒绝下一次召唤。",
+    cooperate: "请对方说清最想要的效果，再一起确定预算、截止时间和交付范围。你可以帮忙圆梦，但许愿的人也要参与，不能只负责擦灯。"
   },
   STIRRER: {
     shine: "你能让死气沉沉的局面突然有反应，适合破冰、锐评、指出大家不敢说的问题。",
@@ -270,7 +270,7 @@ const roleMisreads = {
   LEADERCARD: "别人会以为你想管人，其实你经常只是看不下去事情没人推进。",
   PPTGOD: "别人会以为你只会包装，其实你是在给混乱找一个能被理解的入口。",
   MEETINGBOT: "别人会以为你爱开会，其实你害怕的是没人拍板还假装推进。",
-  WISHPOOL: "别人会以为你只会许愿，其实你看见的是体验还能再往上走一点。",
+  WISHPOOL: "别人以为擦擦灯就能无限许愿，其实你每次兑现都在花自己的时间和精力。",
   STIRRER: "别人会以为你故意搅局，其实你常常先看见了桌面下的矛盾。",
   SHITMOUNTAIN: "别人会以为你和烂摊子绑定，其实你只是太会从废墟里找线头。",
   TWOFACE: "别人会以为你不真诚，其实你是在不同权力温度里保护自己。",
@@ -323,7 +323,7 @@ function readStoredState() {
       ...stored,
       ...(changed ? { legacyAssessment: { answers: stored.answers, resultArchive: stored.resultArchive }, answers: {}, currentIndex: 0, questionnaireUpdated: Object.keys(stored.answers).length > 0 } : {}),
       questionnaireVersion: QUESTIONNAIRE_VERSION,
-      phase: changed && ["quiz", "result", "bonds"].includes(stored.phase) ? "home" : stored.phase === "atlas" ? "home" : stored.phase === "shop" ? "support" : stored.phase,
+      phase: changed && ["quiz", "result", "bonds"].includes(stored.phase) ? "home" : stored.phase === "atlas" ? "home" : ["shop", "support"].includes(stored.phase) ? "community" : stored.phase,
       artStyle: normalizeArtStyle(stored.artStyle)
     };
   } catch {
@@ -580,7 +580,7 @@ function Header({ phase, setPhase, isComplete, artStyle, setArtStyle }) {
     ["quiz", "开测"],
     ["result", "结果"],
     ["bonds", "羁绊"],
-    ["support", "打赏"]
+    ["community", "统计与反馈"]
   ];
 
   return (
@@ -1805,7 +1805,7 @@ export function WctiExperience() {
 
   const setPhase = (phase) => {
     window.clearTimeout(quizAdvanceTimer.current);
-    setState((current) => ({ ...current, phase: phase === "shop" ? "support" : phase }));
+    setState((current) => ({ ...current, phase: ["shop", "support"].includes(phase) ? "community" : phase }));
     window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "smooth" }));
   };
 
@@ -1960,17 +1960,9 @@ export function WctiExperience() {
           artStyle={state.artStyle}
         />
       )}
-      {state.phase === "support" && (
-        <main className="support-view page-enter"><TipJar
-          identity={state.identity}
-          profile={isComplete ? result.profile : null}
-          donations={state.donations || []}
-          onAddDonation={(donation) => setState((current) => ({ ...current, donations: [donation, ...(current.donations || [])].slice(0, 50) }))}
-        /><section className="dgti-section"><button className="secondary-action" type="button" onClick={() => setPhase("community")}>看整体统计 / 留下意见</button></section></main>
-      )}
-      {state.phase === "community" && <CommunityView setPhase={setPhase} autoUpload={state.autoUpload} onAutoUploadChange={(autoUpload) => setState((current) => ({ ...current, autoUpload, collectionNoticeVersion: QUESTIONNAIRE_VERSION }))} />}
+      {state.phase === "community" && <CommunityView setPhase={setPhase} currentRole={isComplete ? result.profile.code : null} autoUpload={state.autoUpload} onAutoUploadChange={(autoUpload) => setState((current) => ({ ...current, autoUpload, collectionNoticeVersion: QUESTIONNAIRE_VERSION }))} />}
       {state.phase === "admin" && <FeedbackAdmin setPhase={setPhase} />}
-      {state.phase !== "quiz" && <footer className="community-footer"><button className="text-action" type="button" onClick={() => setPhase("community")}>使用统计与意见</button><button className="text-action" type="button" onClick={() => setPhase("support")}>支持作者</button><span>原创情境测试 · 娱乐与自我观察</span></footer>}
+      {state.phase !== "quiz" && <footer className="community-footer"><button className="text-action" type="button" onClick={() => setPhase("community")}>使用统计与意见</button><span>原创情境测试 · 娱乐与自我观察</span></footer>}
     </div>
   );
 }

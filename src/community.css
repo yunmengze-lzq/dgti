@@ -6,8 +6,21 @@
 .chart-legend span { display: inline-flex; align-items: center; gap: 8px; }
 .chart-legend i { width: 10px; height: 10px; border-radius: 2px; }
 .chart-scroll, .chart-table-scroll { max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+.chart-plot { position: relative; }
+.chart-yaxis { position: absolute; width: 52px; height: 440px; left: 0; top: 0; pointer-events: none; background: #fff8ea; }
+.chart-yaxis text { fill: #475569; font-size: 12px; font-family: inherit; }
 .chart-scroll svg { display: block; width: 100%; min-width: 1040px; height: auto; }
 .chart-scroll text { fill: #475569; font-size: 12px; font-family: inherit; }
+.chart-own-key { display: inline-flex; align-items: center; gap: 8px; color: #765307; }
+.chart-own-key i { background: #d6a735; }
+.chart-scroll .chart-my-role text { font-weight: 800; fill: #634805; font-size: 14px; }
+.chart-scroll .chart-my-role .chart-me-label { font-size: 11px; }
+.chart-my-row { background: #fff4d4; font-weight: 700; }
+.community-tip { display: flex; align-items: center; justify-content: space-between; gap: 24px; border-top: 1px solid var(--line); }
+.community-tip h2 { font-size: 18px; margin: 0 0 10px; }
+.community-tip p { font-size: 13px; color: var(--ink-soft); line-height: 1.7; }
+.community-tip a { flex: 0 0 132px; }
+.community-tip img { display: block; width: 132px; height: auto; border-radius: 4px; }
 .chart-table table { width: 100%; min-width: 360px; border-collapse: collapse; font-size: 14px; text-align: left; }
 .chart-table th, .chart-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
 .chart-table th { font-weight: 600; }

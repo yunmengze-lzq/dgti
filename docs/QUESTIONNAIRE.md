@@ -1,4 +1,4 @@
-# 题库参考与方法 · 2026-11-02.1
+# 题库参考与方法 · 2026-11-02.2
 
 25 道原创情境题，每题 5 个选项。按最近一个月通常的做法选择，没有遇到过就选最接近的反应。尽量区分查证、行动、关系照顾、拒绝协商或延后等做法；题库不是 MBTI，不输出 E/I、S/N、T/F、J/P。
 
@@ -19,6 +19,8 @@
 
 ## 样本与后续验证
 
+本次将选项统一为完整动作句加粗、吐槽普通字，并把“需求许愿池”改为“职场神灯”：帮助别人实现愿望，而非不断提出需求。相应调整第 7、15、16 题的角色信号与该角色的行为目标；第 23 题区分实际帮助、倾听、陪伴转移和不追问，重新划分对应权重。题库版本已递增，旧版结果不混入本版统计，仍未经过实证效度验证。
+
 100 份案例以固定种子模拟：先覆盖 20 类目标作答，再加入随机偏离。它们仅用于内部测试，不公开，不是人口抽样、真实使用量或常模。真实统计按每个浏览器的最新结果汇总；体验评分是主观反馈，不等于准确性。
 
 上线可先整理“看不懂”“无合适选项”“结果不像我”等意见。正式验证还需单独设计知情同意、招募、认知访谈、重测与外部标准比较。当前仅保存角色与四维摘要，不足以进行题项级心理测量研究。
@@ -26,3 +28,5 @@
 ## 界面参考
 
 [GOV.UK Question pages](https://design-system.service.gov.uk/patterns/question-pages/)：单题聚焦、允许回看。[ONS Feedback pattern](https://service-manual.ons.gov.uk/design-system/patterns/feedback)：短反馈表和明确提交状态。保留项目现有角色美术和移动端四个主入口。
+
+本次文案参考 [GOV.UK Designing good questions](https://www.gov.uk/service-manual/design/designing-good-questions) 的直接、易懂原则；分布图参考 [Datawrapper 图表颜色与高亮设置](https://www.datawrapper.de/academy/how-to-create-a-grouped-column-chart)，用原色加金色标记当前人格，保留同一数量尺度，不将双色画成两组样本。

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import { axisMeta, groupMeta, questionBank, roleProfiles } from "../data/dgti.js";
 import { QUESTIONNAIRE_VERSION, feedbackCategories, questionReferences, researchSources } from "../data/dgtiResearch.js";
 import { callCommunityApi, createSubmissionId } from "../lib/dgtiApi.js";
@@ -60,33 +60,50 @@ function FeedbackForm({ onSaved }) {
   </section>;
 }
 
-function RoleDistributionChart({ data }) {
-  const maximum = Math.max(4, ...data.roles.map((r) => r.count));
-  const step = Math.max(1, Math.ceil(maximum / 4));
-  const ceiling = step * 4;
-  const height = 240, left = 52, top = 24, width = 1200, slot = 56;
+export function RoleDistributionChart({ data, currentRole }) {
+  const scrollRef = useRef(null);
+  const gradientId = useId();
+  const rows = roleProfiles.map((profile) => ({ ...data.roles.find((row) => row.code === profile.code), profile }));
+  const currentIndex = roleProfiles.findIndex((profile) => profile.code === currentRole);
+  const step = Math.max(1, Math.ceil(Math.max(4, ...rows.map((row) => row.count)) / 4));
+  const height = 240, left = 52, top = 32, slot = 82;
+  const width = left + slot * rows.length + 20;
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (container && currentIndex >= 0) container.scrollLeft = Math.max(0, left + currentIndex * slot - container.clientWidth / 2 + slot / 2);
+  }, [currentIndex]);
+  const own = roleProfiles[currentIndex];
   return <div className="role-chart">
-    <div className="chart-legend">{Object.entries(groupMeta).map(([key, group]) => <span key={key}><i style={{ background: group.color }} />{group.name}</span>)}</div>
-    <div className="chart-scroll" tabIndex={0} role="region" aria-label="参与者角色柱状图，可横向滚动">
-      <svg viewBox="0 0 1200 390" role="img" aria-labelledby="role-chart-title role-chart-description">
-        <title id="role-chart-title">参与者角色分布</title><desc id="role-chart-description">横轴是 20 种角色，纵轴是当前题库真实作答设备数。详细数据在图后的表格中。</desc>
-        {[0,1,2,3,4].map((i) => <g key={i}><line x1={left} x2={width - 20} y1={top + height - i * height / 4} y2={top + height - i * height / 4} stroke="#dce1e7" /><text x={left - 12} y={top + height - i * height / 4 + 4} textAnchor="end">{i * step}</text></g>)}
-        <text x={left} y={14}>人数（设备）</text>
-        {data.roles.map((row, i) => {
-          const profile = roleProfiles.find((p) => p.code === row.code);
-          const x = left + 8 + i * slot;
-          const barHeight = row.count / ceiling * height;
-          return <g key={row.code}><title>{profile.name}：{row.count} 份，占 {row.percent}%</title><rect x={x + 9} y={top + height - barHeight} width={30} height={barHeight} rx={3} fill={groupMeta[profile.group].color} /><text x={x + 24} y={top + height - barHeight - 7} textAnchor="middle">{row.count}</text><text transform={`translate(${x + 28}, ${top + height + 24}) rotate(-48)`} textAnchor="end">{profile.name}</text></g>;
+    <div className="chart-legend">{Object.entries(groupMeta).map(([key, group]) => <span key={key}><i style={{ background: group.color }} />{group.name}</span>)}{own && <strong className="chart-own-key"><i />我的人格：{own.name}</strong>}</div>
+    <div className="chart-plot"><div ref={scrollRef} className="chart-scroll" tabIndex={0} role="region" aria-label="参与者角色柱状图，可横向滚动">
+      <svg viewBox={`0 0 ${width} 440`} style={{ minWidth: width }} role="img" aria-labelledby={`${gradientId}-title ${gradientId}-description`}>
+        <title id={`${gradientId}-title`}>参与者角色分布</title><desc id={`${gradientId}-description`}>横轴为角色立绘与名称，纵轴为作答设备数。金色和角色原色共同标记你的人格，不代表两组数据。详细人数在图后的表格中。</desc>
+        <defs><linearGradient id={gradientId}><stop offset="0%" stopColor="#d6a735" /><stop offset="42%" stopColor="#d6a735" /><stop offset="42%" stopColor={own ? groupMeta[own.group].color : "#1f8f8a"} /><stop offset="100%" stopColor={own ? groupMeta[own.group].color : "#1f8f8a"} /></linearGradient></defs>
+        {currentIndex >= 0 && <rect x={left + currentIndex * slot + 3} y={top - 22} width={slot - 6} height={424} rx={6} fill="#fff4d4" stroke="#d6a735" />}
+        {[0, 1, 2, 3, 4].map((i) => <g key={i}><line x1={left} x2={width - 20} y1={top + height - i * height / 4} y2={top + height - i * height / 4} stroke="#dce1e7" /><text x={left - 12} y={top + height - i * height / 4 + 4} textAnchor="end">{i * step}</text></g>)}
+        <text x={left} y={15}>人数（设备）</text>
+        {rows.map(({ profile, count, percent }, i) => {
+          const x = left + i * slot;
+          const barHeight = count / (step * 4) * height;
+          const mine = profile.code === currentRole;
+          const name = Array.from(profile.name.replace(/\s/g, ""));
+          return <g key={profile.code} className={mine ? "chart-my-role" : undefined} data-role={profile.code}>
+            <title>{profile.name}{mine ? "（我的人格）" : ""}：{count} 份，占 {percent}%</title>
+            <rect x={x + (mine ? 17 : 23)} y={top + height - barHeight} width={mine ? 48 : 36} height={barHeight} rx={3} fill={mine ? `url(#${gradientId})` : groupMeta[profile.group].color} />
+            <text x={x + slot / 2} y={top + height - barHeight - 9} textAnchor="middle">{count}</text>
+            <image href={profile.art.mbti} x={x + 12} y={top + height + 12} width={58} height={78} preserveAspectRatio="xMidYMid meet" />
+            <text x={x + slot / 2} y={top + height + 108} textAnchor="middle">{name.length <= 6 ? name.join("") : <><tspan x={x + slot / 2}>{name.slice(0, 4).join("")}</tspan><tspan x={x + slot / 2} dy={17}>{name.slice(4).join("")}</tspan></>}</text>
+            {mine && <text className="chart-me-label" x={x + slot / 2} y={top + height + 149} textAnchor="middle">我在这里</text>}
+          </g>;
         })}
-        <text x={width - 24} y={383} textAnchor="end">角色</text>
       </svg>
-    </div>
+    </div><svg className="chart-yaxis" viewBox="0 0 52 440" aria-hidden="true"><text x={8} y={15}>人数</text>{[0, 1, 2, 3, 4].map((i) => <text key={i} x={40} y={top + height - i * height / 4 + 4} textAnchor="end">{i * step}</text>)}</svg></div>
     {data.count === 0 && <p className="sample-note">还没有本版作答，图中暂时为 0。有人完成测试后会自动更新。</p>}
-    <details className="chart-table"><summary>查看人数、占比与稀有排名</summary><div className="chart-table-scroll"><table><thead><tr><th>角色</th><th>人数</th><th>占比</th><th>稀有排名</th></tr></thead><tbody>{data.roles.map((row) => <tr key={row.code}><th scope="row">{roleProfiles.find((p) => p.code === row.code).name}</th><td>{row.count}</td><td>{row.percent}%</td><td>{row.rarityRank ? `${row.tied ? "并列 " : ""}${row.rarityRank} / ${data.observedTypes}` : "暂无样本"}</td></tr>)}</tbody></table></div></details>
+    <details className="chart-table"><summary>查看人数、占比与稀有排名</summary><div className="chart-table-scroll"><table><thead><tr><th>角色</th><th>人数</th><th>占比</th><th>稀有排名</th></tr></thead><tbody>{rows.map((row) => <tr key={row.code} className={row.code === currentRole ? "chart-my-row" : undefined}><th scope="row">{row.profile.name}{row.code === currentRole ? " · 我" : ""}</th><td>{row.count}</td><td>{row.percent}%</td><td>{row.rarityRank ? `${row.tied ? "并列 " : ""}${row.rarityRank} / ${data.observedTypes}` : "暂无样本"}</td></tr>)}</tbody></table></div></details>
   </div>;
 }
 
-export function CommunityView({ setPhase, autoUpload, onAutoUploadChange }) {
+export function CommunityView({ setPhase, autoUpload, onAutoUploadChange, currentRole }) {
   const { statistics, error, busy, refresh } = useDgtiStatistics();
   const [deleting, setDeleting] = useState(false);
   const [deleteStatus, setDeleteStatus] = useState("");
@@ -104,7 +121,7 @@ export function CommunityView({ setPhase, autoUpload, onAutoUploadChange }) {
   return <main className="community-view page-enter">
     <section className="dgti-section community-heading">
       <button type="button" className="text-action" onClick={() => setPhase("home")}>返回首页</button>
-      <div className="community-title-row"><div><p className="eyebrow">打工人观察站</p><h1>原来不止我一个</h1></div><div className="community-live"><span />每 15 秒更新<button className="text-action" type="button" disabled={busy} onClick={refresh}>刷新</button></div></div>
+      <div className="community-title-row"><div><p className="eyebrow">打工人观察站</p><h1>统计与反馈</h1></div><div className="community-live"><span />每 15 秒更新<button className="text-action" type="button" disabled={busy} onClick={refresh}>刷新</button></div></div>
       <p>谁最能扛，谁最会躲，看看大家都是什么班味。</p>
       {error && <p role="alert">{error}{statistics ? " 当前为上次加载的数据。" : ""}</p>}
       {data && <>
@@ -113,9 +130,13 @@ export function CommunityView({ setPhase, autoUpload, onAutoUploadChange }) {
         <p className="sample-note">按本版、同一浏览器的最新结果计数；不等于实名人数或全体打工人比例。重复相同答案不增加作答次数。</p>
       </>}
     </section>
-    {data && <section className="dgti-section distribution-section"><div className="section-heading"><p className="eyebrow">参与者角色分布</p><h2>看看谁的工位最挤</h2></div><RoleDistributionChart data={data} />{data.count > 0 && <details className="community-axis"><summary>四维平均倾向</summary>{axisMeta.map(([key, , , left, right, , label]) => <p key={key}><strong>{label}</strong><span>{left} {100 - data.axes[key]}% / {right} {data.axes[key]}%</span></p>)}<p className="sample-note">自定义分数的平均值，不是人数占比。</p></details>}</section>}
+    {data && <section className="dgti-section distribution-section"><div className="section-heading"><p className="eyebrow">参与者角色分布</p><h2>看看谁的工位最挤</h2></div><RoleDistributionChart data={data} currentRole={currentRole} />{data.count > 0 && <details className="community-axis"><summary>四维平均倾向</summary>{axisMeta.map(([key, , , left, right, , label]) => <p key={key}><strong>{label}</strong><span>{left} {100 - data.axes[key]}% / {right} {data.axes[key]}%</span></p>)}<p className="sample-note">自定义分数的平均值，不是人数占比。</p></details>}</section>}
     {data?.feedback.count > 0 && <section className="dgti-section feedback-summary"><h2>大家主要在反馈什么</h2>{data.feedback.categories.map(({ key, count }) => <p key={key}><span>{feedbackCategories.find(([id]) => id === key)?.[1]}</span><strong>{count} 条</strong></p>)}</section>}
     <FeedbackForm onSaved={refresh} />
     <section className="dgti-section community-privacy"><ResearchNotes /><details><summary>保存设置与撤回</summary><p>答完默认保存角色和四维摘要到服务器。公开页只显示统计，不上传昵称、手机号、地址或羁绊。当前浏览器的随机凭证用于更新和撤回，清理浏览器数据后无法找回。</p><label className="checkbox-control"><input type="checkbox" checked={autoUpload} onChange={(e) => onAutoUploadChange(e.target.checked)} /><span>完成测试后自动保存到服务器</span></label><button type="button" className="text-action danger-action" disabled={deleting} onClick={withdraw}>{deleting ? "撤回中…" : "撤回本浏览器的结果与意见"}</button><p role="status">{deleteStatus}</p></details><button type="button" className="text-action" onClick={() => setPhase("admin")}>作者入口 · 意见管理</button></section>
+    <section className="dgti-section community-tip" aria-label="自愿打赏">
+      <div><h2>谢谢你支持这个小项目</h2><p>自愿打赏，心意随意。测得开心就好。</p></div>
+      <a href="assets/dgti/shop/alipay-tip-qr.jpg" target="_blank" rel="noreferrer" aria-label="查看支付宝打赏二维码原图"><img src="assets/dgti/shop/alipay-tip-qr.jpg" alt="支付宝自愿打赏二维码" loading="lazy" /></a>
+    </section>
   </main>;
 }
